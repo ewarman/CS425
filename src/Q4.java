@@ -1,5 +1,9 @@
 /*
 CS 425 Homework 2 - Emily Warman, Ayesha Ahmed, Andrew Caron
+
+4.	Write the program that will allow the manager to set or update the schedule of a worker. 
+The program will not allow the manager to put two workers to work on the same thing in the same 
+theatre location at the same time.
 */
 
 import java.util.*;
@@ -7,10 +11,7 @@ import java.sql.*;
 import oracle.jdbc.*;
 
 public class Q4{
-	public static int dbid;
-	public static String dbtime;
-	public static int dbdate;
-	public static final String URL = "jdbc: oracle:thin:@fourier.cs.iit.edu:1521:orcl";
+	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
 	// insert username and password
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
@@ -23,51 +24,48 @@ public class Q4{
 	
 	public void run() throws SQLException{	
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Enter worker ID:\n");
+		System.out.println("Enter worker ID:");
 		int id = scan.nextInt();
-		System.out.println("Enter date:\n");
+		System.out.println("Enter date:");
 		String date = scan.next();
-		System.out.println("Enter time:\n");
-		int time = scan.nextInt();
+		System.out.println("Enter time:");
+		String time = scan.next();
+		System.out.println("Enter job type:");
+		String type = scan.next();
+		System.out.println("Enter theater:");
+		int theater = scan.nextInt();
 		
 		//if the shift can be scheduled, schedule it
-		if (shiftAvailable(id, date, time) == true) {
-			schedule(id, date, time);
-		}
+		schedule(date, time, type, theater, id);
 	}
 
-	public boolean shiftAvailable(int id, String time, int date) throws SQLException{
-		//connect to DB
-		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-		Connection con = DriverManager.getConnection(URL, USER, PSWD);
-		Statement statement = con.createStatement();
-		CallableStatement cstmt = con.prepareCall("{call Q4(?,?,?)}");
-		cstmt.registerOutParameter(1, Types.INTEGER);	
-		cstmt.registerOutParameter(2, Types.VARCHAR);	
-		cstmt.registerOutParameter(3, Types.INTEGER);	
-		ResultSet rs = cstmt.executeQuery();
+	public void schedule(String date, String time, String type, int theater, int id) throws SQLException{
+		Connection conn = null;
+		CallableStatement cstmt = null;
+		try {//connect to DB
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			conn = DriverManager.getConnection(URL, USER, PSWD);
+			cstmt = conn.prepareCall("{call Q4(?,?,?,?,?)}");
+			cstmt.setString(1, date);	
+			cstmt.setString(2, time);	
+			cstmt.setString(3, type);
+			cstmt.setInt(4, theater);
+			cstmt.setInt(5, id);
 		
-		while (rs.next()) {
-			dbid = rs.getInt("EMP_ID");
-			dbtime = rs.getString("TIME");
-			dbdate = rs.getInt("DATE");	
-		}
-		
-		if(time.equals(dbtime) && date == dbdate){
-			if((Integer)dbid != null){
-				System.out.println("Conflict - cannot schedule worker.");
-				return false;
-			}
-		}
-		return true;
-	}
-
-
-	public void schedule(int id, String time, int date) throws SQLException{
-		DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-		Connection con = DriverManager.getConnection(URL, USER, PSWD);
-		CallableStatement cstmt = con.prepareCall("{call Q4(date,time,?)}");
-		cstmt.setInt(1,id);
-		System.out.println("Employee Successfully Scheduled");
+			cstmt.execute();
+		}catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		}finally{
+		      //close resources
+		      try{
+		         if(cstmt!=null) cstmt.close();
+		      }catch(SQLException se2){
+		      }// nothing we can do
+		      try{
+		         if(conn!=null) conn.close();
+		      }catch(SQLException se){
+		         se.printStackTrace();
+		      }
+		 }
 	}
 }
