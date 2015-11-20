@@ -26,33 +26,32 @@ public class Q4{
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter worker ID:");
 		int id = scan.nextInt();
+		//yyyy-mm-dd
 		System.out.println("Enter date:");
 		String date = scan.next();
-		System.out.println("Enter time:");
-		String time = scan.next();
 		System.out.println("Enter job type:");
 		String type = scan.next();
 		System.out.println("Enter theater:");
 		int theater = scan.nextInt();
 		
 		//if the shift can be scheduled, schedule it
-		schedule(date, time, type, theater, id);
+		schedule(date, type, theater, id);
 	}
 
-	public void schedule(String date, String time, String type, int theater, int id) throws SQLException{
+	public void schedule(String date, String type, int theater, int id) throws SQLException{
 		Connection conn = null;
 		CallableStatement cstmt = null;
 		try {//connect to DB
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			conn = DriverManager.getConnection(URL, USER, PSWD);
-			cstmt = conn.prepareCall("{call Q4(?,?,?,?,?)}");
-			cstmt.setString(1, date);	
-			cstmt.setString(2, time);	
-			cstmt.setString(3, type);
-			cstmt.setInt(4, theater);
-			cstmt.setInt(5, id);
+			cstmt = conn.prepareCall("{call Q4(?,?,?,?)}");
+			cstmt.setDate(1, java.sql.Date.valueOf(date));	
+			cstmt.setString(2, type);
+			cstmt.setInt(3, theater);
+			cstmt.setInt(4, id);
 		
 			cstmt.execute();
+			System.out.println("Added to schedule");
 		}catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}finally{
