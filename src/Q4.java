@@ -13,8 +13,8 @@ import oracle.jdbc.*;
 public class Q4{
 	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
 	// insert username and password
-	public static final String USER = "ewarman";
-	public static final String PSWD = "A20317755";
+	public static String USER = "";
+	public static String PSWD = "";
 
 
 	public static void main(String [] args) throws SQLException{
@@ -24,6 +24,10 @@ public class Q4{
 	
 	public void run() throws SQLException{	
 		Scanner scan = new Scanner(System.in);
+		System.out.println("Username:");
+		USER = scan.next();
+		System.out.println("Password:");
+		PSWD = scan.next();
 		System.out.println("Enter worker ID:");
 		int id = scan.nextInt();
 		//yyyy-mm-dd
