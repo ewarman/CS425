@@ -10,6 +10,8 @@ that allows you to test this program.
 
 import java.util.*;
 import java.sql.*;
+import java.sql.Date;
+
 import oracle.jdbc.*;
 public class Q6{
 	
@@ -18,6 +20,7 @@ public class Q6{
 	public static final String USER = "";
 	public static final String PSWD = "";
 	public String username = "", CCN = "";
+	public int userNo = 6;
 	
 	public static void main(String [] args) throws SQLException{
 		Q6 q6 = new Q6();
@@ -34,7 +37,6 @@ public class Q6{
 			System.out.println("Response not understood. Enter yes or no.");
 			response = scan.next();
 		}
-		scan.close();
 		
 		//create a new user or login to an existing account
 		if (response.toLowerCase().equals("no")) login();
@@ -49,46 +51,66 @@ public class Q6{
 		Scanner scan = new Scanner(System.in);
 		
 		//make registered user tuple
+		/*
 		System.out.println("Username:");
-		username = scan.next();
+		username = scan.nextLine();
 		System.out.println("Password:");
-		String password = scan.next();
+		String password = scan.nextLine();
 		System.out.println("Name:");
-		String name = scan.next();
-		System.out.println("CCN:");
-		CCN = scan.next();
+		String name = scan.nextLine();
 		System.out.println("Phone Number:");
-		String phone = scan.next();
+		String phone = scan.nextLine();
 		System.out.println("Email:");
-		String email = scan.next();
+		String email = scan.nextLine();
+		System.out.println("CCN:");
+		CCN = scan.nextLine();
 		
 		//make credit card tuple
 		System.out.println("CVV:");
-		String cvv = scan.next();
+		String cvv = scan.nextLine();
 		System.out.println("Name on card:");
-		String cardname = scan.next();
+		String cardname = scan.nextLine();
 		System.out.println("Card type:");
-		String cardtype = scan.next();
+		String cardtype = scan.nextLine();
 		System.out.println("Address:");
-		String address = scan.next();
+		String address = scan.nextLine();
 		System.out.println("Address 2:");
-		String address2 = scan.next();
+		String address2 = scan.nextLine();
 		System.out.println("Exp date:");
-		String expdate = scan.next();
+		String expdate = scan.nextLine();
 		System.out.println("City:");
-		String city = scan.next();
+		String city = scan.nextLine();
 		System.out.println("State:");
-		String state = scan.next();
+		String state = scan.nextLine();
 		System.out.println("Zip:");
-		String zip = scan.next();
+		String zip = scan.nextLine();
+		*/
+		
+		username = "ltest";
+		String password = "1234";
+		String name = "L Test";
+		String phone = "5051223456";
+		String email = "ltest@gmail.com";
+		CCN = "1222344456667888";
+		
+		String cvv = "123";
+		String cardname = "L Test";
+		String cardtype = "Visa";
+		String address = "123 Main St.";
+		String address2 = "Apt. 2";
+		Date expdate = Date.valueOf("2018-01-02");
+		String city = "Peoria";
+		String state = "Illinois";
+		String zip = "60666";
 		
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
-			Statement st = conn.createStatement(); 
-			st.executeUpdate("INSERT INTO AAHMED31.REGISTEREDUSERS " + "VALUES ("+username+", "+password+", "+name+", "+CCN+", "+email+", "+phone+")");
-			st.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ("+CCN+", "+cvv+", "+cardname+", "+cardtype+", "+expdate+", "+address+", "+address2+", "+city+", "+state+", "+zip+")");
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+CCN+"', '"+cvv+"', '"+cardname+"', '"+cardtype+"', date '"+expdate+"', '"+address+"', '"+address2+"', '"+city+"', '"+state+"', '"+zip+"')");
+			System.out.println("CC info added");
+			st.executeUpdate("INSERT INTO AAHMED31.REGISTEREDUSERS " + "VALUES ('"+userNo+"', '"+username+"', '"+password+"', '"+name+"', '"+CCN+"', '"+email+"', '"+phone+"')");
 			System.out.println(username+" Added.");
 			conn.close(); 
 		} catch (Exception ex) { 
@@ -109,7 +131,7 @@ public class Q6{
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);				
 			Statement st = conn.createStatement(); 
-			String query = "SELECT * FROM AAHMED31.REGISTEREDUSERS WHERE USERNAME = "+username;
+			String query = "SELECT * FROM AAHMED31.REGISTEREDUSERS WHERE USERNAME = "+username+";";
 			st.executeQuery(query);
 			ResultSet rs = st.getResultSet();
 			CCN = rs.getString(5);
