@@ -12,15 +12,13 @@ import java.util.*;
 import java.sql.*;
 import java.sql.Date;
 
-import oracle.jdbc.*;
 public class Q6{
 	
 	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
 	// Owner login username and pwd
-	public static final String USER = "";
-	public static final String PSWD = "";
+	public static final String USER = "ewarman";
+	public static final String PSWD = "A20317755";
 	public String username = "", CCN = "";
-	public int userNo = 6;
 	
 	public static void main(String [] args) throws SQLException{
 		Q6 q6 = new Q6();
@@ -110,7 +108,7 @@ public class Q6{
 			Statement st = conn.createStatement();
 			st.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+CCN+"', '"+cvv+"', '"+cardname+"', '"+cardtype+"', date '"+expdate+"', '"+address+"', '"+address2+"', '"+city+"', '"+state+"', '"+zip+"')");
 			System.out.println("CC info added");
-			st.executeUpdate("INSERT INTO AAHMED31.REGISTEREDUSERS " + "VALUES ('"+userNo+"', '"+username+"', '"+password+"', '"+name+"', '"+CCN+"', '"+email+"', '"+phone+"')");
+			st.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+username+"', '"+password+"', '"+name+"', '"+CCN+"', '"+email+"', '"+phone+"')");
 			System.out.println(username+" Added.");
 			conn.close(); 
 		} catch (Exception ex) { 
@@ -131,7 +129,7 @@ public class Q6{
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);				
 			Statement st = conn.createStatement(); 
-			String query = "SELECT * FROM AAHMED31.REGISTEREDUSERS WHERE USERNAME = "+username+";";
+			String query = "SELECT * FROM AAHMED31.THEATERUSERS WHERE USERNAME = "+username+";";
 			st.executeQuery(query);
 			ResultSet rs = st.getResultSet();
 			CCN = rs.getString(5);

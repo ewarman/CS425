@@ -9,80 +9,108 @@ more credit points per review to a SILVER member than a GOLD member.
 import java.util.*;
 import java.sql.*;
 
-import oracle.jdbc.*;
+public class Q5 {
 
-public class Q5{
-	public static final String URL = "jdbc: oracle:thin:@fourier.cs.iit.edu:1521:orcl";
-// Enter your login and password
+	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
+	// Owner login username and pwd
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
-
-	double dbcpts;
-	String dbrvw;
-	String dbrwdstats;
-	String pwd;
+	public static String username = "", password="";
 	
-	public static void main(String [] args) {
-		Q5 q5 = new Q5();
-		q5.run();
-	}
-
-	public void run(){
-		System.out.println("\t\t------Credit Points per Review Contribution-----");
-		System.out.println("Enter your username: ");
-		Scanner s1 = new Scanner (System.in);
-		System.out.println("Enter your password: ");
-		pwd = s1.next();
-}
-	public void getCreditInfo(double cred_pts){
-		Connection con = null;
-		Statement stmt = null;
-		try{ 
-			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-
-			con = DriverManager.getConnection(URL, USER, PSWD);
-			stmt = con.createStatement();
-
-			CallableStatement cstmt = con.prepareCall("{call Q5(?,?,?)}");
-			cstmt.registerOutParameter(1, Types.DOUBLE);
-			cstmt.registerOutParameter(2, Types.VARCHAR);
-			cstmt.registerOutParameter(3, Types.VARCHAR);
-			cstmt.execute();
-  
-			dbcpts = cstmt.getDouble(1);
-			dbrwdstats = cstmt.getString(2);
-			dbrvw = cstmt.getString(3); 
-  
-			cstmt.close();
-			stmt.close();
-			con.close();
-		}catch(SQLException se) {
-			se.printStackTrace();
-		}catch(Exception e) {
-			e.printStackTrace(); 
-		}finally{
-			try{
-				if (stmt != null)
-					stmt.close();
-			}catch(SQLException se2){
+	public static void main(String [] args) throws SQLException{
+		//login as owner
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Enter owner username:");
+		username = scan.nextLine();
+		System.out.println("Enter owner password");
+		password = scan.nextLine();
+		if (login(username,password)) {
+			//output current rewards levels
+			HashMap<String, Integer> currentPoints = getCurrentPoints();
+			System.out.println("\nCurrent reward levels:");
+			System.out.println("\nSilver = "+currentPoints.get("Silver"));
+			System.out.println("\nGold = "+currentPoints.get("Gold"));
+			System.out.println("\nPlatinum = "+currentPoints.get("Platinum"));
+			
+			//update a level
+			System.out.println("\nChange which level?: ");
+			String level = scan.nextLine();
+			System.out.println("\nNew number: ");
+			int value = scan.nextInt();
+			
+			//validate value
+			if (level.equals("Silver")) {
+				while (value > currentPoints.get("Gold")) {
+					System.out.println("\nError: enter new value less than "+currentPoints.get("Gold"));
+					value = scan.nextInt();
+				}
 			}
-			try{
-				if(con!=null)
-					con.close();
-			}catch(SQLException se){
-				se.printStackTrace();
-			}//end finally try
-		}//end try
-	}
-
-	public void setCreditInfo(double cred_pts){
-		System.out.println("Enter credit points");
-		Scanner s4 = new Scanner(System.in);
-		cred_pts = s4.nextDouble();
-		if (reward_Status = "Silver"){
-			"Silver".cred_pts < "Gold".cred_pts;
+			if (level.equals("Gold")) {
+				while (value > currentPoints.get("Platinum")) {
+					System.out.println("\nError: enter new value less than "+currentPoints.get("Platinum"));
+					value = scan.nextInt();
+				}
+			}
+			
+			//update database
+			update(level, value);
 		}
-		else if (reward_Status = “Gold”){
-          “Gold”.cred_pts > “Silver”.cred_pts;
-      }    
-} 
+		//login unsuccessful
+		else System.out.println("Permission Denied");
+		scan.close();
+	}
+	
+	public static boolean login(String username, String password) {
+		String dbUsername = "", dbPassword = "";
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT USERNAME, SCHED_PASSWORD FROM AAHMED31.MANAGEMENT WHERE MAN_TYPE = 'Owner'");
+			ResultSet rs = st.getResultSet();
+			rs.next();
+			dbUsername = rs.getString(1);
+			dbPassword = rs.getString(2);
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		if (dbUsername.equals(username) && dbPassword.equals(password)) return true;
+		else return false;
+	}
+	
+	public static HashMap<String, Integer> getCurrentPoints() {
+		HashMap<String,Integer> currentPoints = new HashMap<String, Integer>();
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT * FROM AAHMED31.POINTLEVEL");
+			ResultSet rs = st.getResultSet();
+			for(int i = 0; i<4; i++) {
+				rs.next();
+				currentPoints.put(rs.getString(1),rs.getInt(2));
+			}
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		return currentPoints;
+	}
+	
+	public static void update(String level, int points) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("UPDATE AAHMED31.POINTLEVEL SET LEVEL_BOUNDARY=" +points+ "WHERE LEVEL_NAME='"+level+"'");
+			System.out.println("Update successful");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
+}
