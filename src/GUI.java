@@ -9,6 +9,8 @@ import javax.swing.*;
 
 public class GUI extends JFrame implements ActionListener
 {
+	User user = new User();
+	
 	//Test Variables
 	String username = "test user";
 	String password = "test pw";
@@ -301,24 +303,24 @@ public class GUI extends JFrame implements ActionListener
 		updateUserButton.addActionListener(this);
 		
 		JLabel usernameLabel = new JLabel("Username: ");
-		usernameText = new JTextField(username);
+		usernameText = new JTextField(user.username);
 		usernameText.setEnabled(false);
 		
 		JLabel passwordLabel = new JLabel("Password: ");
-		passwordText = new JTextField(password);
+		passwordText = new JTextField(user.password);
 		
 		JLabel nameLabel = new JLabel("Name: ");
-		nameText = new JTextField(name);
+		nameText = new JTextField(user.name);
 		nameText.setEnabled(false);
 		
 		JLabel ccnLabel = new JLabel("CCN: ");
-		ccnText = new JTextField(ccn);
+		ccnText = new JTextField(user.ccn);
 		
 		JLabel phoneLabel = new JLabel("Phone: ");
-		phoneText = new JTextField(phone);
+		phoneText = new JTextField(user.phone);
 		
 		JLabel emailLabel = new JLabel("Email: ");
-		emailText = new JTextField(email);
+		emailText = new JTextField(user.email);
 		
 		JLabel pointsLabel = new JLabel("Reward Points: ");
 		pointsText = new JTextField(new Integer(points).toString());
@@ -429,16 +431,14 @@ public class GUI extends JFrame implements ActionListener
 		{
 			if(e.getActionCommand() == "user login")
 			{
-				createUserTabs();
-				layoutManager.show(contentPanel, "User Tabs");
-				userForumTab.setVisible(false);
-				userTicketTab.setVisible(false);
 				username = loginField.getText();
 				password = new String(pwField.getPassword());
 				
-				User user = new User();
 				if(user.login(username, password) == true) {
-					JOptionPane.showMessageDialog(frame,"Hooray!","Login Success",JOptionPane.ERROR_MESSAGE);
+					createUserTabs();
+					layoutManager.show(contentPanel, "User Tabs");
+					userForumTab.setVisible(false);
+					userTicketTab.setVisible(false);
 				}
 				else {
 					JOptionPane.showMessageDialog(frame,"Invalid username/password.","Login Error",JOptionPane.ERROR_MESSAGE);
@@ -453,6 +453,8 @@ public class GUI extends JFrame implements ActionListener
 				 ccn = ccnText.getText();
 				 phone = phoneText.getText();
 				 email = emailText.getText();
+				 
+				 user.update(password, ccn, phone, email);
 			}	
 		}
 		else if(userForumTab.isShowing())

@@ -62,4 +62,17 @@ public class User {
 			return false;
 		}
 	}
+	
+	public void update(String pswd, String cc, String ph, String eml) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("UPDATE AAHMED31.THEATERUSERS SET PASSWORD='"+pswd+"',CCN='"+ccn+"',PHONE='"+ph+"',EMAIL='"+email+"' WHERE USERNAME='"+username+"'");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
 }
