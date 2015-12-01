@@ -1,5 +1,6 @@
 /*
 CS 425 Homework 2 - Emily Warman, Ayesha Ahmed, Andrew Caron
+Question 4
 
 4.	Write the program that will allow the manager to set or update the schedule of a worker. 
 The program will not allow the manager to put two workers to work on the same thing in the same 
