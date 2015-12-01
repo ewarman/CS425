@@ -27,27 +27,27 @@ public class Q5 {
 		if (login(username,password)) {
 			//output current rewards levels
 			HashMap<String, Integer> currentPoints = getCurrentPoints();
-			System.out.println("\nCurrent reward levels:");
-			System.out.println("\nSilver = "+currentPoints.get("Silver"));
-			System.out.println("\nGold = "+currentPoints.get("Gold"));
-			System.out.println("\nPlatinum = "+currentPoints.get("Platinum"));
+			System.out.println("Current reward levels:");
+			System.out.println("Silver = "+currentPoints.get("Silver"));
+			System.out.println("Gold = "+currentPoints.get("Gold"));
+			System.out.println("Platinum = "+currentPoints.get("Platinum"));
 			
 			//update a level
-			System.out.println("\nChange which level?: ");
+			System.out.println("Change which level?: ");
 			String level = scan.nextLine();
-			System.out.println("\nNew number: ");
+			System.out.println("New number: ");
 			int value = scan.nextInt();
 			
 			//validate value
 			if (level.equals("Silver")) {
 				while (value > currentPoints.get("Gold")) {
-					System.out.println("\nError: enter new value less than "+currentPoints.get("Gold"));
+					System.out.println("Error: enter new value less than "+currentPoints.get("Gold"));
 					value = scan.nextInt();
 				}
 			}
 			if (level.equals("Gold")) {
 				while (value > currentPoints.get("Platinum")) {
-					System.out.println("\nError: enter new value less than "+currentPoints.get("Platinum"));
+					System.out.println("Error: enter new value less than "+currentPoints.get("Platinum"));
 					value = scan.nextInt();
 				}
 			}
