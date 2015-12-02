@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -24,8 +25,8 @@ public class GUI extends JFrame implements ActionListener
 	String thread2 = "thread2";
 	String comment1 = "comment1";
 	String comment2 = "comment2";
-	String thread3 = "";
-	String comment3 = "";
+	Vector<Vector<String>> movieThreads = new Vector<Vector<String>>();
+	Vector<Vector<String>> starThreads = new Vector<Vector<String>>();
 	
 	//Main
 	public static void main(String args[])
@@ -83,16 +84,39 @@ public class GUI extends JFrame implements ActionListener
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
 	JRadioButton createStarThreadButton;
+	JRadioButton selectMovieRadioButton;
+	JRadioButton selectLocationRadioButton;
 	
 	//Combo Boxes
 	JComboBox<String> threadList;
 	JComboBox<String> commentList;
+	JComboBox<String> theaterList;
+	JComboBox<String> movieList;
+	JComboBox<String> dateList;
 	
 	//Constructor
 	GUI()
 	{
 		createFrame();
 		createLoginPanel();
+		
+		//This is for testing purposes only.  Remove once DAOs are complete
+		movieThreads.add(new Vector<String>());
+		movieThreads.add(new Vector<String>());
+		movieThreads.add(new Vector<String>());
+		starThreads.add(new Vector<String>());
+		starThreads.add(new Vector<String>());
+		starThreads.add(new Vector<String>());
+		
+		movieThreads.get(0).add(thread1);
+		movieThreads.get(0).add(thread2);
+		starThreads.get(0).add(thread1);
+		starThreads.get(0).add(thread2);
+		
+		movieThreads.get(1).add(comment1);
+		movieThreads.get(2).add(comment2);
+		starThreads.get(1).add(comment1);
+		starThreads.get(2).add(comment2);
 	}
 	
 	//Creates main frame object
@@ -229,6 +253,28 @@ public class GUI extends JFrame implements ActionListener
 	{
 		userTabbedPane.addTab("Tickets", userTicketTab);
 		userTicketTab.setVisible(true);
+		
+		userTicketTab.setLayout(new GridLayout(1,2));
+		JPanel ticketChoicesPanel = new JPanel(new GridLayout(4,1));
+		JPanel ticketRadioPanel = new JPanel(new GridLayout(2,1));
+		
+		selectMovieRadioButton = new JRadioButton("Select By Movie");
+		selectLocationRadioButton = new JRadioButton("Select By Theater");
+		ButtonGroup group = new ButtonGroup();
+		group.add(selectMovieRadioButton);
+		group.add(selectLocationRadioButton);
+		
+		theaterList = new JComboBox<String>();
+		movieList = new JComboBox<String>();
+		dateList = new JComboBox<String>();
+		
+		ticketChoicesPanel.setVisible(true);
+		ticketRadioPanel.setVisible(true);
+		ticketRadioPanel.add(selectMovieRadioButton);
+		ticketRadioPanel.add(selectLocationRadioButton);
+		ticketChoicesPanel.add(ticketRadioPanel);
+		
+		userTicketTab.add(ticketChoicesPanel);
 	}
 	
 	//creates user forum tab
@@ -302,6 +348,7 @@ public class GUI extends JFrame implements ActionListener
 		userForumTab.setVisible(true);
 	}
 	
+	//creates user info tab
 	private void createUserInfoTab()
 	{
 		//add credit card information fields -- cvv, name on credit card, cardtype, exp date, street1, street2, city, state, zip
@@ -445,6 +492,7 @@ public class GUI extends JFrame implements ActionListener
 		userInfoTab.setVisible(true);
 	}
 	
+	//creates new thread from create thread panel
 	private void createThread()
 	{
 		forumCreatePanel = new JPanel(new GridLayout(5,1));
@@ -458,6 +506,7 @@ public class GUI extends JFrame implements ActionListener
 		ButtonGroup createGroup = new ButtonGroup();
 		createGroup.add(createStarThreadButton);
 		createGroup.add(createMovieThreadButton);
+		createStarThreadButton.setSelected(true);
 		
 		forumCreateButtonPanel.add(createStarThreadButton);
 		forumCreateButtonPanel.add(createMovieThreadButton);
@@ -484,12 +533,17 @@ public class GUI extends JFrame implements ActionListener
 		forumCreatePanel.add(createCommentText);
 		forumCreatePanel.add(threadSubmitButton);
 		contentPanel.add(forumCreatePanel,"Forum Create");
+		
+		starRadioButton.setSelected(true);
+		starRadioButton.setSelected(false);
+		movieRadioButton.setSelected(false);
 	}
 	
+	//creates new comment from create thread panel
 	private void createComment()
-	{
+	{		
 		createThread();
-		
+	
 		createStarThreadButton.setEnabled(false);
 		createStarThreadButton.setSelected(starRadioButton.isSelected());
 		createMovieThreadButton.setEnabled(false);
@@ -501,6 +555,7 @@ public class GUI extends JFrame implements ActionListener
 		threadSubmitButton.setActionCommand("submit comment");
 	}
 	
+	//handles user actions on GUI
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -540,13 +595,29 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(userForumTab.isShowing())
 		{
-			if((e.getActionCommand() == "movie threads" || e.getActionCommand() == "star threads"))
+			threadList.removeActionListener(this);
+			commentList.removeActionListener(this);
+			if(e.getActionCommand() == "movie threads")
 			{
-				if(!threadList.isEnabled())
+				threadList.removeAllItems();
+				threadList.setEnabled(true);
+				for(int i=0; i<movieThreads.get(0).size(); i++)
 				{
-					threadList.setEnabled(true);
-					threadList.addItem(thread1);
-					threadList.addItem(thread2);
+					threadList.addItem(movieThreads.get(0).get(i));
+				}
+
+				commentList.removeAllItems();
+				commentList.setEnabled(false);
+				commentText.setText("");
+				threadList.setSelectedIndex(-1);
+			}
+			else if(e.getActionCommand() == "star threads")
+			{
+				threadList.removeAllItems();
+				threadList.setEnabled(true);
+				for(int i=0; i<starThreads.get(0).size(); i++)
+				{
+					threadList.addItem(starThreads.get(0).get(i));
 				}
 
 				commentList.removeAllItems();
@@ -558,14 +629,38 @@ public class GUI extends JFrame implements ActionListener
 			{
 				commentList.setEnabled(true);
 				commentList.removeAllItems();
-				if(movieRadioButton.isSelected() ) commentList.addItem(comment1);
-				else commentList.addItem(comment2);
+				if(movieRadioButton.isSelected()) 
+				{
+					int i = movieThreads.get(0).indexOf((String) threadList.getSelectedItem());
+					System.out.println(i);
+					
+					for(int j=0;j<movieThreads.get(i+1).size();j++)
+					{
+						commentList.addItem(movieThreads.get(i+1).get(j));
+					}
+					
+				}
+				else if(starRadioButton.isSelected())
+				{
+					{
+						int i = starThreads.get(0).indexOf((String) threadList.getSelectedItem());
+						System.out.println(i);
+
+						for(int j=0;j<starThreads.get(i+1).size();j++)
+						{
+								commentList.addItem(starThreads.get(i+1).get(j));
+						}
+						
+					}
+				}
 				commentList.setSelectedIndex(-1);
 				commentText.setText("");
 			}
 			else if(e.getActionCommand() == "comment selected" && commentList.getSelectedIndex() != -1)
 			{
 				commentText.setText((String)((JComboBox) e.getSource()).getSelectedItem());
+				System.out.println("test");
+				System.out.println(commentList.getSelectedIndex());
 			}
 			else if(e.getActionCommand() == "create thread")
 			{
@@ -581,21 +676,49 @@ public class GUI extends JFrame implements ActionListener
 				}
 				else JOptionPane.showMessageDialog(frame,"You must select a thread first.","Create Comment Error",JOptionPane.ERROR_MESSAGE);
 			}
+			threadList.addActionListener(this);
+			commentList.addActionListener(this);
 		}
 		else if(forumCreatePanel.isShowing())
 		{
 			if(e.getActionCommand() == "submit thread")
 			{
-				thread3 = createThreadText.getText();
-				threadList.addItem(thread3);
+				if(createMovieThreadButton.isSelected())
+				{
+					movieThreads.add(new Vector<String>());
+					movieThreads.get(0).add(createThreadText.getText());
+					movieThreads.get(movieThreads.size()-1).add(createCommentText.getText());
+				}
+				else
+				{
+					starThreads.add(new Vector<String>());
+					starThreads.get(0).add(createThreadText.getText());
+					starThreads.get(starThreads.size()-1).add(createCommentText.getText());
+
+				}
 
 				layoutManager.show(contentPanel, "User Tabs");
 			}
 			else if(e.getActionCommand() == "submit comment")
 			{
-				//Need DAO object to take in string, not this global variable
-				comment3 = createCommentText.getText();
+				if(createMovieThreadButton.isSelected())
+				{
+					int i = movieThreads.get(0).indexOf(createThreadText.getText());
+					movieThreads.get(i+1).add(createCommentText.getText());
+				}
+				else
+				{
+					int i = starThreads.get(0).indexOf(createThreadText.getText());
+					starThreads.get(i+1).add(createCommentText.getText());
+				}
+				layoutManager.show(contentPanel, "User Tabs");
 			}
+			
+			if(createMovieThreadButton.isSelected())
+			{
+				movieRadioButton.doClick();
+			}
+			else starRadioButton.doClick();
 		}
 		frame.pack();
 	}
