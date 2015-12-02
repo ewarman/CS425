@@ -11,7 +11,6 @@ public class GUI extends JFrame implements ActionListener
 {
 	User user = new User();
 	
-	//Test push for Git
 	//Test Variables
 	String username = "test user";
 	String password = "test pw";
@@ -47,6 +46,15 @@ public class GUI extends JFrame implements ActionListener
 	JTabbedPane userTabbedPane;
 	
 	//Text
+	JTextField ccvText;
+	JTextField ccNameText;
+	JTextField ccTypeText;
+	JTextField ccExpText;
+	JTextField street1Text;
+	JTextField street2Text;
+	JTextField cityText;
+	JTextField stateText;
+	JTextField zipText;
 	JTextField usernameText;
 	JTextField nameText;
 	JTextField passwordText;
@@ -297,7 +305,7 @@ public class GUI extends JFrame implements ActionListener
 	private void createUserInfoTab()
 	{
 		//add credit card information fields -- cvv, name on credit card, cardtype, exp date, street1, street2, city, state, zip
-		JPanel userInfoMain = new JPanel(new GridLayout(4,4));
+		JPanel userInfoMain = new JPanel(new GridLayout(8,4));
 		JPanel userInfoButton = new JPanel();
 		
 		JButton updateUserButton = new JButton("Update Info");
@@ -315,9 +323,6 @@ public class GUI extends JFrame implements ActionListener
 		nameText = new JTextField(user.name);
 		nameText.setEnabled(false);
 		
-		JLabel ccnLabel = new JLabel("CCN: ");
-		ccnText = new JTextField(user.ccn);
-		
 		JLabel phoneLabel = new JLabel("Phone: ");
 		phoneText = new JTextField(user.phone);
 		
@@ -332,22 +337,66 @@ public class GUI extends JFrame implements ActionListener
 		statusText = new JTextField(user.rewardLevel);
 		statusText.setEnabled(false);
 		
+		JLabel ccnLabel = new JLabel("CCN: ");
+		ccnText = new JTextField(user.ccn);
+		
+		JLabel ccvLabel = new JLabel("CCV: ");
+		ccvText = new JTextField("Need DAO w/this field");
+		
+		JLabel ccNameLabel = new JLabel("Name on CC: ");
+		ccNameText = new JTextField("Need DAO w/this field");
+		
+		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
+		ccExpText = new JTextField("Need DAO w/this field");
+		
+		JLabel street1Label = new JLabel("Street 1: ");
+		street1Text = new JTextField("Need DAO w/this field");
+		
+		JLabel street2Label = new JLabel("Street 2: ");
+		street2Text = new JTextField("Need DAO w/this field");
+		
+		JLabel cityLabel = new JLabel("City: ");
+		cityText = new JTextField("Need DAO w/this field");
+		
+		JLabel stateLabel = new JLabel("State: ");
+		stateText = new JTextField("Need DAO w/this field");
+		
+		JLabel zipLabel = new JLabel("Zip Code: ");
+		zipText = new JTextField("Need DAO w/this field");
+		
 		userInfoMain.add(usernameLabel);
 		userInfoMain.add(usernameText);
-		userInfoMain.add(passwordLabel);
-		userInfoMain.add(passwordText);
-		userInfoMain.add(nameLabel);
-		userInfoMain.add(nameText);
 		userInfoMain.add(ccnLabel);
 		userInfoMain.add(ccnText);
+		userInfoMain.add(passwordLabel);
+		userInfoMain.add(passwordText);
+		userInfoMain.add(ccvLabel);
+		userInfoMain.add(ccvText);
+		userInfoMain.add(nameLabel);
+		userInfoMain.add(nameText);
+		userInfoMain.add(ccNameLabel);
+		userInfoMain.add(ccNameText);
 		userInfoMain.add(phoneLabel);
 		userInfoMain.add(phoneText);
+		userInfoMain.add(ccExpLabel);
+		userInfoMain.add(ccExpText);
 		userInfoMain.add(emailLabel);
 		userInfoMain.add(emailText);
+		userInfoMain.add(zipLabel);
+		userInfoMain.add(zipText);
 		userInfoMain.add(pointsLabel);
 		userInfoMain.add(pointsText);
 		userInfoMain.add(statusLabel);
 		userInfoMain.add(statusText);
+		userInfoMain.add(street1Label);
+		userInfoMain.add(street1Text);
+		userInfoMain.add(street2Label);
+		userInfoMain.add(street2Text);
+		userInfoMain.add(cityLabel);
+		userInfoMain.add(cityText);
+		userInfoMain.add(stateLabel);
+		userInfoMain.add(stateText);
+
 		
 		userInfoButton.add(updateUserButton,SwingConstants.CENTER);
 		
@@ -368,6 +417,23 @@ public class GUI extends JFrame implements ActionListener
 		pointsText.setVisible(true);
 		statusLabel.setVisible(true);
 		statusText.setVisible(true);
+		ccvLabel.setVisible(true);
+		ccvText.setVisible(true);
+		ccNameLabel.setVisible(true);
+		ccNameText.setVisible(true);
+		ccExpLabel.setVisible(true);
+		ccExpText.setVisible(true);
+		street1Label.setVisible(true);
+		street1Text.setVisible(true);
+		street2Label.setVisible(true);
+		street2Text.setVisible(true);
+		cityLabel.setVisible(true);
+		cityText.setVisible(true);
+		stateLabel.setVisible(true);
+		stateText.setVisible(true);
+		zipLabel.setVisible(true);
+		zipText.setVisible(true);
+		
 		
 		userInfoMain.setVisible(true);
 		userInfoButton.setVisible(true);
@@ -383,6 +449,9 @@ public class GUI extends JFrame implements ActionListener
 	{
 		forumCreatePanel = new JPanel(new GridLayout(5,1));
 		JPanel forumCreateButtonPanel = new JPanel();
+		
+		JLabel newLabel = new JLabel("Create a New Thread");
+		newLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		createStarThreadButton = new JRadioButton("Star Thread");
 		createMovieThreadButton = new JRadioButton("Movie Thread");
@@ -409,7 +478,7 @@ public class GUI extends JFrame implements ActionListener
 		forumCreatePanel.setVisible(true);
 		userTabbedPane.setVisible(false);
 		
-		forumCreatePanel.add(new JLabel("Create a New Thread"));
+		forumCreatePanel.add(newLabel);
 		forumCreatePanel.add(forumCreateButtonPanel);
 		forumCreatePanel.add(createThreadText);
 		forumCreatePanel.add(createCommentText);
@@ -421,7 +490,15 @@ public class GUI extends JFrame implements ActionListener
 	{
 		createThread();
 		
+		createStarThreadButton.setEnabled(false);
+		createStarThreadButton.setSelected(starRadioButton.isSelected());
+		createMovieThreadButton.setEnabled(false);
+		createMovieThreadButton.setSelected(movieRadioButton.isSelected());
 		
+		createThreadText.setEnabled(false);
+		createThreadText.setText((String) threadList.getSelectedItem()); 
+		
+		threadSubmitButton.setActionCommand("submit comment");
 	}
 	
 	@Override
@@ -516,7 +593,8 @@ public class GUI extends JFrame implements ActionListener
 			}
 			else if(e.getActionCommand() == "submit comment")
 			{
-				
+				//Need DAO object to take in string, not this global variable
+				comment3 = createCommentText.getText();
 			}
 		}
 		frame.pack();
