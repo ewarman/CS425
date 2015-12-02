@@ -323,11 +323,11 @@ public class GUI extends JFrame implements ActionListener
 		emailText = new JTextField(user.email);
 		
 		JLabel pointsLabel = new JLabel("Reward Points: ");
-		pointsText = new JTextField(new Integer(points).toString());
+		pointsText = new JTextField(String.valueOf(user.curPoints));
 		pointsText.setEnabled(false);
 		
 		JLabel statusLabel = new JLabel("Reward Level: ");
-		statusText = new JTextField(status);
+		statusText = new JTextField(user.rewardLevel);
 		statusText.setEnabled(false);
 		
 		userInfoMain.add(usernameLabel);
@@ -435,6 +435,7 @@ public class GUI extends JFrame implements ActionListener
 				password = new String(pwField.getPassword());
 				
 				if(user.login(username, password) == true) {
+					user.getPointsInfo();
 					createUserTabs();
 					layoutManager.show(contentPanel, "User Tabs");
 					userForumTab.setVisible(false);
@@ -455,6 +456,7 @@ public class GUI extends JFrame implements ActionListener
 				 email = emailText.getText();
 				 
 				 user.update(password, ccn, phone, email);
+				 JOptionPane.showMessageDialog(frame,"Update Success","User Profile",JOptionPane.PLAIN_MESSAGE);
 			}	
 		}
 		else if(userForumTab.isShowing())

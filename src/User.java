@@ -10,7 +10,8 @@ public class User {
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
 	
-	String username, password, name, phone, email, ccn;
+	String username, password, name, phone, email, ccn, rewardLevel;
+	int curPoints, totPoints;
 	//CreditCard cc;
 	
 	public User() {
@@ -60,6 +61,32 @@ public class User {
 		}
 		else {
 			return false;
+		}
+	}
+	
+	public void getPointsInfo() {
+		totPoints = 0;
+		curPoints = 0;
+		rewardLevel = "Beginner";
+		System.out.println(username);
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT TOTAL_POINTS, CURRENT_POINTS FROM AAHMED31.POINTS WHERE USERNAME='"+username+"'");
+			ResultSet rs = st.getResultSet();
+			if (rs.next()) {
+				totPoints = rs.getInt(1);
+				curPoints = rs.getInt(2);
+				Statement st2 = conn.createStatement();
+				st2.executeQuery("SELECT LEVEL_NAME FROM AAHMED31.POINTLEVEL WHERE LEVEL_BOUNDARY < "+totPoints+ "ORDER BY LEVEL_BOUNDARY DESC");
+				ResultSet rs2 = st2.getResultSet();
+				if (rs2.next()) rewardLevel=rs2.getString(1);
+			}
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
 		}
 	}
 	
