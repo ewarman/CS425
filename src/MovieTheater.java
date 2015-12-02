@@ -26,17 +26,14 @@ public class MovieTheater {
 			 }
 
 			 public void run(){
-			 System.out.println("\t\t------ Recreation Center Revenue
-			Calculator ------");
-			 System.out.println("Please enter age group, e.g. 50 means 50+:
-			");
+			 System.out.println("\t\t------ Recreation Center Revenue Calculator ------");
+			 System.out.println("Please enter age group, e.g. 50 means 50+: ");
 			 Scanner sc = new Scanner(System.in);
 			 while(true){
 			 try{
 			 age = sc.nextDouble();
 			 if(age<0){
-			 throw new NumberFormatException("Age should be a
-			positive interger.");
+			 throw new NumberFormatException("Age should be a positive interger.");
 			 }else{
 			 break;
 			 }
@@ -47,14 +44,12 @@ public class MovieTheater {
 			 }
 			 }
 
-			 System.out.println("Please enter discount percentage, e.g. 20
-			means 20% off: ");
+			 System.out.println("Please enter discount percentage, e.g. 20 means 20% off: ");
 			 while(true){
 			 try{
 			 discount = sc.nextDouble();
 			 if(discount<0){
-			 throw new NumberFormatException("Discount should
-			be a positive interger.");
+			 throw new NumberFormatException("Discount should be a positive interger.");
 			 }else{
 			 break;
 			 }
@@ -83,12 +78,9 @@ public class MovieTheater {
 
 			 statement = con.createStatement();
 
-			 // Execute a SELECT query on Oracle Dummy DUAL Table.
-			Useful for retrieving system values
-			 // Enables us to retrieve values as if querying from a
-			table
-			 CallableStatement cstmt = con.prepareCall("{call
-			Q6(?,?,?)}");
+			 // Execute a SELECT query on Oracle Dummy DUAL Table. Useful for retrieving system values
+			 // Enables us to retrieve values as if querying from a table
+			 CallableStatement cstmt = con.prepareCall("{call Q6(?,?,?)}");
 			 cstmt.setDouble(1,age);
 			 cstmt.registerOutParameter(2,Types.DOUBLE);
 			 cstmt.registerOutParameter(3,Types.DOUBLE);
@@ -125,8 +117,7 @@ public class MovieTheater {
 			 public void calculate(double discount){
 			 double discountamount = partial * (discount) / 100.0;
 			 double finalvalue = total - discountamount;
-			 System.out.println("The revenue will decrease from "+total+"
-			to "+finalvalue+". We make $"+discountamount+" less.");
+			 System.out.println("The revenue will decrease from "+total+" to "+finalvalue+". We make $"+discountamount+" less.");
 			 }
 
 }
