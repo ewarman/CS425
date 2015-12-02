@@ -37,17 +37,6 @@ public class Admin {
 		theater = th;
 	}
 	
-	public String toString() {
-		return "Logged in as "+username+
-				"\n password: " +password+
-				"\n name: " +name+
-				"\n address: "+address+
-				"\n phone: "+phone+
-				"\n ssn: "+ssn+
-				"\n ID: "+id+
-				"\n theater: "+theater;
-	}
-	
 	public boolean login(String usr, String pswd) {
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
@@ -81,5 +70,30 @@ public class Admin {
 		else {
 			return false;
 		}
+	}
+	
+	public User viewUser(String usr) {
+		User user = new User();
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT * FROM AAHMED31.THEATERUSERS WHERE USERNAME='"+usr+"'");
+			ResultSet rs = st.getResultSet();
+			//if no user with that username returned
+			if (rs.next()) {
+				user.username = rs.getString(1);
+				user.password = rs.getString(2);
+				user.name = rs.getString(3);
+				user.ccn = rs.getString(4);
+				user.phone = rs.getString(5);
+				user.email = rs.getString(6);
+			}
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		return user;
 	}
 }

@@ -295,6 +295,7 @@ public class GUI extends JFrame implements ActionListener
 	
 	private void createUserInfoTab()
 	{
+		//add credit card information fields -- cvv, name on credit card, cardtype, exp date, street1, street2, city, state, zip
 		JPanel userInfoMain = new JPanel(new GridLayout(4,4));
 		JPanel userInfoButton = new JPanel();
 		

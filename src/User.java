@@ -68,7 +68,6 @@ public class User {
 		totPoints = 0;
 		curPoints = 0;
 		rewardLevel = "Beginner";
-		System.out.println(username);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
@@ -101,5 +100,12 @@ public class User {
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
+	}
+	
+	public boolean purchaseTicket(int price) {
+		CreditCardCo auth = new CreditCardCo();
+		int bal = auth.getBalance(ccn);
+		if (bal<price) return true;
+		else return false;
 	}
 }
