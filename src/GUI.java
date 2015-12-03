@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,9 @@ public class GUI extends JFrame implements ActionListener
 	//Test Variables
 	String username = "test user";
 	String password = "test pw";
+	String test1 = "generic test string 1";
+	String test2 = "generic test string 2";
+	String test3 = "generic test string 3";
 	String name = "test name";
 	String ccn = "123465789";
 	String phone = "123-456-7890";
@@ -27,6 +31,9 @@ public class GUI extends JFrame implements ActionListener
 	String comment2 = "comment2";
 	Vector<Vector<String>> movieThreads = new Vector<Vector<String>>();
 	Vector<Vector<String>> starThreads = new Vector<Vector<String>>();
+	Vector<String> Movies = new Vector<String>();
+	Vector<String> Theaters = new Vector<String>();
+	Vector<String> Dates = new Vector<String>();
 	
 	//Main
 	public static void main(String args[])
@@ -38,13 +45,13 @@ public class GUI extends JFrame implements ActionListener
 	JFrame frame;
 	
 	//Panels
-	JPanel contentPanel;
-	JPanel loginPanel;
-	JPanel userTicketTab;
-	JPanel userForumTab;
-	JPanel userInfoTab;
-	JPanel forumCreatePanel;
-	JTabbedPane userTabbedPane;
+	JPanel contentPanel = new JPanel();
+	JPanel loginPanel = new JPanel();
+	JPanel userTicketTab = new JPanel();
+	JPanel userForumTab = new JPanel();
+	JPanel userInfoTab = new JPanel();
+	JPanel forumCreatePanel = new JPanel();
+	JTabbedPane userTabbedPane = new JTabbedPane();
 	
 	//Text
 	JTextField ccvText;
@@ -66,6 +73,7 @@ public class GUI extends JFrame implements ActionListener
 	JTextField statusText;
 	JTextField createThreadText;
 	JTextField createCommentText;
+	JTextField ticketNumText;
 	JTextArea commentText;
 	JPasswordField pwField;
 	JTextField loginField;
@@ -80,12 +88,13 @@ public class GUI extends JFrame implements ActionListener
 	JButton createThreadButton;
 	JButton threadSubmitButton;
 	JButton commentSubmitButton;
+	JButton buyTicketButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
 	JRadioButton createStarThreadButton;
 	JRadioButton selectMovieRadioButton;
-	JRadioButton selectLocationRadioButton;
+	JRadioButton selectTheaterRadioButton;
 	
 	//Combo Boxes
 	JComboBox<String> threadList;
@@ -254,27 +263,84 @@ public class GUI extends JFrame implements ActionListener
 		userTabbedPane.addTab("Tickets", userTicketTab);
 		userTicketTab.setVisible(true);
 		
-		userTicketTab.setLayout(new GridLayout(1,2));
-		JPanel ticketChoicesPanel = new JPanel(new GridLayout(4,1));
-		JPanel ticketRadioPanel = new JPanel(new GridLayout(2,1));
+		userTicketTab.setLayout(new GridLayout(4,3));
+		
+		JPanel radioPanel = new JPanel(new GridLayout(1,2));
 		
 		selectMovieRadioButton = new JRadioButton("Select By Movie");
-		selectLocationRadioButton = new JRadioButton("Select By Theater");
+		selectMovieRadioButton.setActionCommand("select by movie");
+		selectMovieRadioButton.addActionListener(this);
+		
+		selectTheaterRadioButton = new JRadioButton("Select By Theater");
+		selectTheaterRadioButton.setActionCommand("select by theater");
+		selectTheaterRadioButton.addActionListener(this);
+		
 		ButtonGroup group = new ButtonGroup();
 		group.add(selectMovieRadioButton);
-		group.add(selectLocationRadioButton);
+		group.add(selectTheaterRadioButton);
+		
+		JLabel theaterLabel = new JLabel("Theaters: ",SwingConstants.CENTER);
 		
 		theaterList = new JComboBox<String>();
+		theaterList.setActionCommand("chose theater");
+		theaterList.addActionListener(this);
+		
+		//TESTING ONLY
+		theaterList.addItem(test1);
+		theaterList.addItem(test2);
+		
+		JLabel movieLabel = new JLabel("Movies: ",SwingConstants.CENTER);
+		
 		movieList = new JComboBox<String>();
+		movieList.setActionCommand("chose movie");
+		movieList.addActionListener(this);
+		
+		//TESTING ONLY
+		movieList.addItem(test2);
+		movieList.addItem(test1);
+		
+		JLabel dateLabel = new JLabel("Dates & Times: ",SwingConstants.CENTER);
+		
 		dateList = new JComboBox<String>();
+		dateList.setActionCommand("chose date");
+		dateList.addActionListener(this);
 		
-		ticketChoicesPanel.setVisible(true);
-		ticketRadioPanel.setVisible(true);
-		ticketRadioPanel.add(selectMovieRadioButton);
-		ticketRadioPanel.add(selectLocationRadioButton);
-		ticketChoicesPanel.add(ticketRadioPanel);
+		//TESTING ONLY
+		dateList.addItem(test3);
 		
-		userTicketTab.add(ticketChoicesPanel);
+		buyTicketButton = new JButton("Buy Ticket");
+		buyTicketButton.setActionCommand("buy ticket");
+		buyTicketButton.addActionListener(this);
+		
+		JLabel ticketNumLabel = new JLabel("Number of Tickets (9 max): ");
+		ticketNumText = new JTextField("1",1);
+		ticketNumText.setMaximumSize(new Dimension(1,1));
+		JPanel ticketNumPanel = new JPanel(new GridLayout(1,2));
+		ticketNumPanel.add(ticketNumLabel);
+		ticketNumPanel.add(ticketNumText);
+		
+		radioPanel.add(selectMovieRadioButton);
+		radioPanel.add(selectTheaterRadioButton);
+		userTicketTab.add(new JPanel());
+		userTicketTab.add(radioPanel);
+		userTicketTab.add(new JPanel());
+		userTicketTab.add(theaterLabel);
+		userTicketTab.add(movieLabel);
+		userTicketTab.add(dateLabel);
+		userTicketTab.add(theaterList);
+		userTicketTab.add(movieList);
+		userTicketTab.add(dateList);
+		userTicketTab.add(ticketNumPanel);
+		userTicketTab.add(new JPanel());
+		userTicketTab.add(buyTicketButton);
+		
+		theaterList.setEnabled(false);
+		movieList.setEnabled(false);
+		dateList.setEnabled(false);
+		
+		dateList.setSelectedIndex(-1);
+		movieList.setSelectedIndex(-1);
+		theaterList.setSelectedIndex(-1);
 	}
 	
 	//creates user forum tab
@@ -719,6 +785,143 @@ public class GUI extends JFrame implements ActionListener
 				movieRadioButton.doClick();
 			}
 			else starRadioButton.doClick();
+		}
+		else if(userTicketTab.isShowing())
+		{
+			theaterList.removeActionListener(this);
+			movieList.removeActionListener(this);
+			dateList.removeActionListener(this);
+			
+			if(e.getActionCommand() == "select by movie")
+			{
+				movieList.removeAllItems();
+				theaterList.removeAllItems();
+				dateList.removeAllItems();
+				
+				theaterList.setEnabled(false);
+				movieList.setEnabled(true);
+				dateList.setEnabled(false);
+				
+				//TODO: Need to add all possible movies
+				
+				//TESTING ONLY
+				movieList.addItem(test1);
+				movieList.addItem(test2);
+				
+				theaterList.setSelectedIndex(-1);
+				movieList.setSelectedIndex(-1);
+				dateList.setSelectedIndex(-1);
+			}
+			else if(e.getActionCommand() == "select by theater")
+			{
+				movieList.removeAllItems();
+				theaterList.removeAllItems();
+				dateList.removeAllItems();
+				
+				//TODO: Need to add all possible theaters
+				
+				//TESTING ONLY
+				theaterList.addItem(test2);
+				theaterList.addItem(test3);
+				
+				movieList.setEnabled(false);
+				theaterList.setEnabled(true);
+				dateList.setEnabled(false);
+				
+				theaterList.setSelectedIndex(-1);
+				movieList.setSelectedIndex(-1);
+				dateList.setSelectedIndex(-1);
+			}
+			else if(e.getActionCommand() == "chose movie")
+			{
+				if(selectMovieRadioButton.isSelected())
+				{
+					theaterList.removeAllItems();
+					
+					//TODO: Need to add theaters where chosen movie is playing
+					
+					//remove once dao's in place
+					theaterList.addItem(test2);
+					theaterList.addItem(test3);
+					
+					theaterList.setEnabled(true);
+					dateList.setEnabled(false);
+					
+					theaterList.setSelectedIndex(-1);
+					dateList.setSelectedIndex(-1);
+				}
+				else
+				{
+					dateList.removeAllItems();
+					
+					//TODO: Need to add dates when chosen movie is playing at chosen theater
+					
+					//remove once dao's in place
+					dateList.addItem(test3);
+					
+					dateList.setEnabled(true);	
+					dateList.setSelectedIndex(-1);
+				}
+			}
+			else if(e.getActionCommand() == "chose theater")
+			{	
+				if(selectTheaterRadioButton.isSelected())
+				{
+					movieList.removeAllItems();
+					
+					//TODO: Need to add movies playing at chosen theater
+					
+					//remove once dao's in place
+					movieList.addItem(test1);
+					movieList.addItem(test2);
+					
+					movieList.setEnabled(true);
+					dateList.setEnabled(false);
+					
+					movieList.setSelectedIndex(-1);
+					dateList.setSelectedIndex(-1);
+				}
+				else
+				{
+					dateList.removeAllItems();
+					
+					//TODO: Need to add dates when chosen movie is playing at chosen theater
+					
+					//remove once dao's in place
+					dateList.addItem(test3);
+					
+					dateList.setEnabled(true);
+					dateList.setSelectedIndex(-1);
+				}
+			}
+			else if(e.getActionCommand() == "buy ticket")
+			{
+				if(dateList.getSelectedIndex() != -1)
+				{
+					String numCheck = ticketNumText.getText();
+					switch(numCheck)
+					{
+						case "1":
+						case "2":
+						case "3":
+						case "4":
+						case "5":
+						case "6":
+						case "7":
+						case "8":
+						case "9":
+							//TODO: Need DAO logic for adding ticket to DB
+							break;
+						default: 
+							JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else JOptionPane.showMessageDialog(frame,"You must select a theater, movie, and date/time.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);
+			}
+			
+			theaterList.addActionListener(this);
+			movieList.addActionListener(this);
+			dateList.addActionListener(this);
 		}
 		frame.pack();
 	}
