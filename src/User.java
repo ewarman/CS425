@@ -1,7 +1,9 @@
+package src;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Date;
 
 
 public class User {
@@ -10,24 +12,27 @@ public class User {
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
 	
-	String username, password, name, phone, email, ccn, rewardLevel;
+	String username, password, name, phone, email, rewardLevel, cc;
 	int curPoints, totPoints;
-	//CreditCard cc;
+	CreditCard ccn;
 	
 	public User() {
 		username = "";
 		password = "";
 		name = "";
-		ccn = "";
 		phone = "";
 		email = "";
+		cc = "";
+		ccn = new CreditCard();
 	}
 	
 	public User(String u, String p, String n, String c, String ph, String e) {
 		username = u;
 		password = p;
 		name = n;
-		ccn = c;
+		cc = c;
+		ccn = new CreditCard();
+		ccn.getInfo(cc);
 		phone = ph;
 		email = e;
 	}
@@ -41,14 +46,11 @@ public class User {
 			st.executeQuery("SELECT * FROM AAHMED31.THEATERUSERS WHERE USERNAME='"+usr+"'");
 			ResultSet rs = st.getResultSet();
 			//if no user with that username returned
-			if (!rs.next()) {
-				return false;
-			}
-			else {
+			if (rs.next()) {
 				username = rs.getString(1);
 				password = rs.getString(2);
 				name = rs.getString(3);
-				ccn = rs.getString(4);
+				cc = rs.getString(4);
 				phone = rs.getString(5);
 				email = rs.getString(6);
 			}
@@ -57,6 +59,7 @@ public class User {
 			System.err.println(ex.getMessage()); 
 		}
 		if (username.equals(usr) && password.equals(pswd)) {
+			ccn.getInfo(cc);
 			return true;
 		}
 		else {
@@ -89,13 +92,23 @@ public class User {
 		}
 	}
 	
-	public void update(String pswd, String cc, String ph, String eml) {
+	public void update(String pswd, String c, String ph, String eml, String cvv, String name, String date, String s1, String s2, String city, String st, String zip) {
+		Date d = Date.valueOf(date);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
-			Statement st = conn.createStatement();
-			st.executeUpdate("UPDATE AAHMED31.THEATERUSERS SET PASSWORD='"+pswd+"',CCN='"+ccn+"',PHONE='"+ph+"',EMAIL='"+email+"' WHERE USERNAME='"+username+"'");
+			Statement st1 = conn.createStatement();
+			//st1.executeUpdate("UPDATE AAHMED31.THEATERUSERS SET PASSWORD='"+pswd+"',CCN='"+c+"',PHONE='"+ph+"',EMAIL='"+email+"' WHERE USERNAME='"+username+"'");
+			Statement st2 = conn.createStatement();
+			Statement st3 = conn.createStatement();
+			Statement st4 = conn.createStatement();
+			//st2.executeUpdate("UPDATE AAHMED31.CC SET CCN='"+c+"',CCN_CODE='"+cvv+"',EXP_DATE=TO_DATE('"+date+"', 'yyyy-mm-dd') ,STREET1='"+s1+"',STREET2='"+s2+"',CITY='"+city+"',STATE='"+st+"',ZIP='"+zip+"' WHERE CCN='"+cc+"'");
+			st3.executeUpdate("Delete from AAHMED31.THEATERUSERS Where Name = '"+name+"'");
+			st4.executeUpdate("Delete from AAHMED31.CC Where CC_Name = '"+name+"'");
+			st1.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+c+"', '"+cvv+"', '"+name+"', 'Visa', date '"+d+"', '"+s1+"', '"+s2+"', '"+city+"', '"+st+"', '"+zip+"')");
+			System.out.println("CC info added");
+			st2.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+username+"', '"+password+"', '"+name+"', '"+c+"', '"+phone+"', '"+email+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -104,7 +117,7 @@ public class User {
 	
 	public boolean purchaseTicket(int price) {
 		CreditCardCo auth = new CreditCardCo();
-		int bal = auth.getBalance(ccn);
+		int bal = auth.getBalance(ccn.ccn);
 		if (bal<price) return true;
 		else return false;
 	}
