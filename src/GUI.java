@@ -52,6 +52,7 @@ public class GUI extends JFrame implements ActionListener
 	JPanel userInfoTab = new JPanel();
 	JPanel forumCreatePanel = new JPanel();
 	JPanel guestInfoPanel = new JPanel();
+	JPanel registerPanel = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
 	JTabbedPane guestTabbedPane = new JTabbedPane();
 	
@@ -94,6 +95,7 @@ public class GUI extends JFrame implements ActionListener
 	JButton buyTicketButton;
 	JButton guestPurchaseButton;
 	JButton guestCancelButton;
+	JButton registerUserButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
@@ -166,7 +168,7 @@ public class GUI extends JFrame implements ActionListener
 		
 		loginPanel.setVisible(true);
 		
-		contentPanel.add(loginPanel, "Login");
+		contentPanel.add(loginPanel, "Login Panel");
 		frame.pack();
 	}
 	
@@ -225,7 +227,7 @@ public class GUI extends JFrame implements ActionListener
 		
 		userLoginButton.setActionCommand("user login");
 		empLoginButton.setActionCommand("emp login");
-		createUserButton.setActionCommand("create user");
+		createUserButton.setActionCommand("register user");
 		guestLoginButton.setActionCommand("guest login");
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -242,6 +244,100 @@ public class GUI extends JFrame implements ActionListener
 		buttonPanel.setVisible(true);
 		
 		loginPanel.add(buttonPanel,BorderLayout.SOUTH);
+	}
+
+	//creates user register panel
+	private void createRegisterPanel()
+	{
+		registerPanel = new JPanel(new GridLayout(2,1));
+		contentPanel.add(registerPanel, "Register Panel");
+		
+		JPanel userInfoMain = new JPanel(new GridLayout(7,4));
+		JPanel userInfoButton = new JPanel();
+		
+		registerUserButton = new JButton("Create Account");
+		registerUserButton.setActionCommand("create account");
+		registerUserButton.addActionListener(this);
+		
+		JLabel usernameLabel = new JLabel("Username: ");
+		usernameText = new JTextField("");
+		
+		JLabel passwordLabel = new JLabel("Password: ");
+		passwordText = new JTextField("");
+		
+		JLabel nameLabel = new JLabel("Name: ");
+		nameText = new JTextField("");
+		
+		JLabel phoneLabel = new JLabel("Phone: ");
+		phoneText = new JTextField("");
+		
+		JLabel emailLabel = new JLabel("Email: ");
+		emailText = new JTextField("");
+		
+		JLabel ccnLabel = new JLabel("CCN: ");
+		ccnText = new JTextField("");
+		
+		JLabel ccvLabel = new JLabel("CCV: ");
+		ccvText = new JTextField("");
+		
+		JLabel ccNameLabel = new JLabel("Name on CC: ");
+		ccNameText = new JTextField("");
+		
+		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
+		ccExpText = new JTextField("");
+		
+		JLabel street1Label = new JLabel("Street 1: ");
+		street1Text = new JTextField("");
+		
+		JLabel street2Label = new JLabel("Street 2: ");
+		street2Text = new JTextField("");
+		
+		JLabel cityLabel = new JLabel("City: ");
+		cityText = new JTextField("");
+		
+		JLabel stateLabel = new JLabel("State: ");
+		stateText = new JTextField("");
+		
+		JLabel zipLabel = new JLabel("Zip Code: ");
+		zipText = new JTextField("");
+		
+		userInfoMain.add(usernameLabel);
+		userInfoMain.add(usernameText);
+		userInfoMain.add(ccnLabel);
+		userInfoMain.add(ccnText);
+		userInfoMain.add(passwordLabel);
+		userInfoMain.add(passwordText);
+		userInfoMain.add(ccvLabel);
+		userInfoMain.add(ccvText);
+		userInfoMain.add(nameLabel);
+		userInfoMain.add(nameText);
+		userInfoMain.add(ccNameLabel);
+		userInfoMain.add(ccNameText);
+		userInfoMain.add(phoneLabel);
+		userInfoMain.add(phoneText);
+		userInfoMain.add(ccExpLabel);
+		userInfoMain.add(ccExpText);
+		userInfoMain.add(emailLabel);
+		userInfoMain.add(emailText);
+		userInfoMain.add(zipLabel);
+		userInfoMain.add(zipText);
+		userInfoMain.add(street1Label);
+		userInfoMain.add(street1Text);
+		userInfoMain.add(street2Label);
+		userInfoMain.add(street2Text);
+		userInfoMain.add(cityLabel);
+		userInfoMain.add(cityText);
+		userInfoMain.add(stateLabel);
+		userInfoMain.add(stateText);
+
+		
+		userInfoButton.add(registerUserButton,SwingConstants.CENTER);
+		
+		userInfoMain.setVisible(true);
+		userInfoButton.setVisible(true);
+		
+		registerPanel.add(userInfoMain);
+		registerPanel.add(userInfoButton);
 	}
 	
 	//creates tabbed pane for guest login
@@ -782,6 +878,11 @@ public class GUI extends JFrame implements ActionListener
 				layoutManager.show(contentPanel, "Guest Tabs");
 				userForumTab.setVisible(false);
 			}
+			else if(e.getActionCommand() == "register user")
+			{
+				createRegisterPanel();
+				layoutManager.show(contentPanel, "Register Panel");
+			}
 		}
 		else if(userInfoTab.isShowing())
 		{
@@ -1109,9 +1210,9 @@ public class GUI extends JFrame implements ActionListener
 			}
 			else if(e.getActionCommand() == "confirm guest purchase")
 			{
-				if(!ccnText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty()  && !ccvText.getText().isEmpty()  
-					&& !ccvText.getText().isEmpty()  && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty()
-					&& !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty())
+				if(!ccnText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccNameText.getText().isEmpty()  && !zipText.getText().isEmpty()  
+					&& !ccExpText.getText().isEmpty()  && !street1Text.getText().isEmpty() && !street2Text.getText().isEmpty() && !cityText.getText().isEmpty()
+					&& !stateText.getText().isEmpty() && !emailText.getText().isEmpty())
 				{
 					String numTickets = (String) ticketNumList.getSelectedItem();
 					String date = (String) dateList.getSelectedItem();
@@ -1125,6 +1226,23 @@ public class GUI extends JFrame implements ActionListener
 					layoutManager.show(contentPanel,"Guest Tabs");
 				}
 				else JOptionPane.showMessageDialog(frame,"Must fill out all info fields","Purchase Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if(registerPanel.isShowing())
+		{
+			if(e.getActionCommand() == "create account")
+			{
+				if(!ccnText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccNameText.getText().isEmpty()  && !zipText.getText().isEmpty()  
+					&& !ccExpText.getText().isEmpty()  && !street1Text.getText().isEmpty() && !street2Text.getText().isEmpty() && !cityText.getText().isEmpty()
+					&& !stateText.getText().isEmpty() && !emailText.getText().isEmpty() && !usernameText.getText().isEmpty() && !passwordText.getText().isEmpty()
+					&& !nameText.getText().isEmpty() && !phoneText.getText().isEmpty())
+				{
+					//TODO: Need logic to register user
+					JOptionPane.showMessageDialog(frame,"Your account has been created.","Account Registration",JOptionPane.INFORMATION_MESSAGE);
+					layoutManager.show(contentPanel,"Login Panel");
+				}
+				else JOptionPane.showMessageDialog(frame,"Must fill out all info fields","Register Error",JOptionPane.ERROR_MESSAGE);
+				
 			}
 		}
 		frame.pack();
