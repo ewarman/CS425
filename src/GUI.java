@@ -1,3 +1,4 @@
+package src;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -451,31 +452,31 @@ public class GUI extends JFrame implements ActionListener
 		statusText.setEnabled(false);
 		
 		JLabel ccnLabel = new JLabel("CCN: ");
-		ccnText = new JTextField(user.ccn);
+		ccnText = new JTextField(user.ccn.ccn);
 		
-		JLabel ccvLabel = new JLabel("CCV: ");
-		ccvText = new JTextField("Need DAO w/this field");
+		JLabel ccvLabel = new JLabel("CVV: ");
+		ccvText = new JTextField(user.ccn.cvv);
 		
 		JLabel ccNameLabel = new JLabel("Name on CC: ");
-		ccNameText = new JTextField("Need DAO w/this field");
+		ccNameText = new JTextField(user.ccn.name);
 		
 		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
-		ccExpText = new JTextField("Need DAO w/this field");
+		ccExpText = new JTextField(user.ccn.expDate.toString());
 		
 		JLabel street1Label = new JLabel("Street 1: ");
-		street1Text = new JTextField("Need DAO w/this field");
+		street1Text = new JTextField(user.ccn.street1);
 		
 		JLabel street2Label = new JLabel("Street 2: ");
-		street2Text = new JTextField("Need DAO w/this field");
+		street2Text = new JTextField(user.ccn.street2);
 		
 		JLabel cityLabel = new JLabel("City: ");
-		cityText = new JTextField("Need DAO w/this field");
+		cityText = new JTextField(user.ccn.city);
 		
 		JLabel stateLabel = new JLabel("State: ");
-		stateText = new JTextField("Need DAO w/this field");
+		stateText = new JTextField(user.ccn.state);
 		
 		JLabel zipLabel = new JLabel("Zip Code: ");
-		zipText = new JTextField("Need DAO w/this field");
+		zipText = new JTextField(user.ccn.zip);
 		
 		userInfoMain.add(usernameLabel);
 		userInfoMain.add(usernameText);
@@ -654,8 +655,17 @@ public class GUI extends JFrame implements ActionListener
 				 ccn = ccnText.getText();
 				 phone = phoneText.getText();
 				 email = emailText.getText();
+				 String cvv = ccvText.getText();
+				 String ccName = ccNameText.getText();
+				 //java.sql.Date date = java.sql.Date.valueOf(ccExpText.getText());
+				 String date = ccExpText.getText();
+				 String zip = zipText.getText();
+				 String s1 = street1Text.getText();
+				 String s2 = street2Text.getText();
+				 String city = cityText.getText();
+				 String state = stateText.getText();
 				 
-				 user.update(password, ccn, phone, email);
+				 user.update(password, ccn, phone, email, cvv, ccName, date, s1, s2, city, state, zip);
 				 JOptionPane.showMessageDialog(frame,"Update Success","User Profile",JOptionPane.PLAIN_MESSAGE);
 			}	
 		}
