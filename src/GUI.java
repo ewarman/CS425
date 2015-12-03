@@ -51,7 +51,9 @@ public class GUI extends JFrame implements ActionListener
 	JPanel userForumTab = new JPanel();
 	JPanel userInfoTab = new JPanel();
 	JPanel forumCreatePanel = new JPanel();
+	JPanel guestInfoPanel = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
+	JTabbedPane guestTabbedPane = new JTabbedPane();
 	
 	//Text
 	JTextField ccvText;
@@ -73,11 +75,12 @@ public class GUI extends JFrame implements ActionListener
 	JTextField statusText;
 	JTextField createThreadText;
 	JTextField createCommentText;
-	JTextField ticketNumText;
+	JTextField ticketPriceText;
+	JTextField priceConfirmText;
+	JTextField loginField;
 	JTextArea commentText;
 	JPasswordField pwField;
-	JTextField loginField;
-	
+
 	//Buttons
 	JButton userLoginButton;
 	JButton empLoginButton;
@@ -89,6 +92,8 @@ public class GUI extends JFrame implements ActionListener
 	JButton threadSubmitButton;
 	JButton commentSubmitButton;
 	JButton buyTicketButton;
+	JButton guestPurchaseButton;
+	JButton guestCancelButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
@@ -102,6 +107,7 @@ public class GUI extends JFrame implements ActionListener
 	JComboBox<String> theaterList;
 	JComboBox<String> movieList;
 	JComboBox<String> dateList;
+	JComboBox<String> ticketNumList;
 	
 	//Constructor
 	GUI()
@@ -238,6 +244,21 @@ public class GUI extends JFrame implements ActionListener
 		loginPanel.add(buttonPanel,BorderLayout.SOUTH);
 	}
 	
+	//creates tabbed pane for guest login
+	private void createGuestTabs()
+	{
+		guestTabbedPane = new JTabbedPane();
+		contentPanel.add(guestTabbedPane,"Guest Tabs");
+		
+		userTicketTab = new JPanel();
+		createGuestTicketTab();
+		
+		userForumTab = new JPanel(new GridLayout(2,1));
+		createGuestForumTab();
+		
+		guestTabbedPane.setVisible(false);
+	}
+	
 	//creates tabbed pane for user login
 	private void createUserTabs()
 	{
@@ -256,7 +277,112 @@ public class GUI extends JFrame implements ActionListener
 		
 		userTabbedPane.setVisible(false);
 	}
+	
+	//creates guest ticket tab from modified user ticket tab
+	private void createGuestTicketTab()
+	{
+		createUserTicketTab();
+		buyTicketButton.setActionCommand("buy guest ticket");
+	
+		guestTabbedPane.addTab("Tickets",userTicketTab);
+	}
+	
+	//creates guest forum tab from modified user forum tab
+	private void createGuestForumTab()
+	{
+		createUserForumTab();
 
+		createCommentButton.setEnabled(false);
+		createThreadButton.setEnabled(false);
+
+		guestTabbedPane.addTab("Forum",userForumTab);
+	}
+
+	//creates guest info panel
+	private void createGuestInfoPanel()
+	{
+		guestInfoPanel = new JPanel(new GridLayout(2,1));
+		
+		JPanel guestInfoMain = new JPanel(new GridLayout(5,4));
+		JPanel guestInfoExtras = new JPanel(new GridLayout(1,3));
+		
+		priceConfirmText = new JTextField(ticketPriceText.getText());
+		priceConfirmText.setEnabled(false);
+		
+		guestPurchaseButton = new JButton("Confirm Purchase");
+		guestPurchaseButton.setActionCommand("confirm guest purchase");
+		guestPurchaseButton.addActionListener(this);
+		
+		guestCancelButton = new JButton("Cancel");
+		guestCancelButton.setActionCommand("cancel guest purchase");
+		guestCancelButton.addActionListener(this);
+		
+		JLabel emailLabel = new JLabel("Email: ");
+		emailText = new JTextField("");
+		
+		JLabel ccnLabel = new JLabel("CCN: ");
+		ccnText = new JTextField("");
+		
+		JLabel ccvLabel = new JLabel("CCV: ");
+		ccvText = new JTextField("");
+		
+		JLabel ccNameLabel = new JLabel("Name on CC: ");
+		ccNameText = new JTextField("");
+		
+		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
+		ccExpText = new JTextField("");
+		
+		JLabel street1Label = new JLabel("Street 1: ");
+		street1Text = new JTextField("");
+		
+		JLabel street2Label = new JLabel("Street 2: ");
+		street2Text = new JTextField("");
+		
+		JLabel cityLabel = new JLabel("City: ");
+		cityText = new JTextField("");
+		
+		JLabel stateLabel = new JLabel("State: ");
+		stateText = new JTextField("");
+		
+		JLabel zipLabel = new JLabel("Zip Code: ");
+		zipText = new JTextField("");
+		
+		guestInfoMain.add(ccnLabel);
+		guestInfoMain.add(ccnText);
+		guestInfoMain.add(ccvLabel);
+		guestInfoMain.add(ccvText);
+		guestInfoMain.add(ccNameLabel);
+		guestInfoMain.add(ccNameText);
+		guestInfoMain.add(ccExpLabel);
+		guestInfoMain.add(ccExpText);
+		guestInfoMain.add(zipLabel);
+		guestInfoMain.add(zipText);
+		guestInfoMain.add(street1Label);
+		guestInfoMain.add(street1Text);
+		guestInfoMain.add(street2Label);
+		guestInfoMain.add(street2Text);
+		guestInfoMain.add(cityLabel);
+		guestInfoMain.add(cityText);
+		guestInfoMain.add(stateLabel);
+		guestInfoMain.add(stateText);
+		guestInfoMain.add(emailLabel);
+		guestInfoMain.add(emailText);
+
+		
+		guestInfoExtras.add(priceConfirmText);
+		guestInfoExtras.add(guestPurchaseButton);
+		guestInfoExtras.add(guestCancelButton);
+		
+		guestInfoMain.setVisible(true);
+		guestInfoExtras.setVisible(true);
+		
+		guestInfoPanel.add(guestInfoMain);
+		guestInfoPanel.add(guestInfoExtras);
+
+		guestInfoPanel.setVisible(true);
+		contentPanel.add(guestInfoPanel,"Guest Info");
+	}
+	
 	//creates user ticket tab
 	private void createUserTicketTab()
 	{
@@ -312,12 +438,18 @@ public class GUI extends JFrame implements ActionListener
 		buyTicketButton.setActionCommand("buy ticket");
 		buyTicketButton.addActionListener(this);
 		
-		JLabel ticketNumLabel = new JLabel("Number of Tickets (9 max): ");
-		ticketNumText = new JTextField("1",1);
-		ticketNumText.setMaximumSize(new Dimension(1,1));
+		String[] s = {"1","2","3","4","5","6","7","8","9"};
+		JLabel ticketNumLabel = new JLabel("Number of Tickets: ");
+		ticketNumList = new JComboBox<String>(s);
+		ticketNumList.setActionCommand("chose num tickets");
+		ticketNumList.addActionListener(this);
 		JPanel ticketNumPanel = new JPanel(new GridLayout(1,2));
 		ticketNumPanel.add(ticketNumLabel);
-		ticketNumPanel.add(ticketNumText);
+		ticketNumPanel.add(ticketNumList);
+		
+		ticketPriceText = new JTextField();
+		ticketPriceText.setEnabled(false);
+		ticketPriceText.setText("");
 		
 		radioPanel.add(selectMovieRadioButton);
 		radioPanel.add(selectTheaterRadioButton);
@@ -331,7 +463,7 @@ public class GUI extends JFrame implements ActionListener
 		userTicketTab.add(movieList);
 		userTicketTab.add(dateList);
 		userTicketTab.add(ticketNumPanel);
-		userTicketTab.add(new JPanel());
+		userTicketTab.add(ticketPriceText);
 		userTicketTab.add(buyTicketButton);
 		
 		theaterList.setEnabled(false);
@@ -417,11 +549,10 @@ public class GUI extends JFrame implements ActionListener
 	//creates user info tab
 	private void createUserInfoTab()
 	{
-		//add credit card information fields -- cvv, name on credit card, cardtype, exp date, street1, street2, city, state, zip
 		JPanel userInfoMain = new JPanel(new GridLayout(8,4));
 		JPanel userInfoButton = new JPanel();
 		
-		JButton updateUserButton = new JButton("Update Info");
+		updateUserButton = new JButton("Update Info");
 		updateUserButton.setActionCommand("user updates info");
 		updateUserButton.addActionListener(this);
 		
@@ -645,6 +776,12 @@ public class GUI extends JFrame implements ActionListener
 					JOptionPane.showMessageDialog(frame,"Invalid username/password.","Login Error",JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			else if(e.getActionCommand() == "guest login")
+			{
+				createGuestTabs();
+				layoutManager.show(contentPanel, "Guest Tabs");
+				userForumTab.setVisible(false);
+			}
 		}
 		else if(userInfoTab.isShowing())
 		{
@@ -811,6 +948,8 @@ public class GUI extends JFrame implements ActionListener
 				theaterList.setSelectedIndex(-1);
 				movieList.setSelectedIndex(-1);
 				dateList.setSelectedIndex(-1);
+				
+				ticketPriceText.setText("");
 			}
 			else if(e.getActionCommand() == "select by theater")
 			{
@@ -831,6 +970,8 @@ public class GUI extends JFrame implements ActionListener
 				theaterList.setSelectedIndex(-1);
 				movieList.setSelectedIndex(-1);
 				dateList.setSelectedIndex(-1);
+				
+				ticketPriceText.setText("");
 			}
 			else if(e.getActionCommand() == "chose movie")
 			{
@@ -862,6 +1003,7 @@ public class GUI extends JFrame implements ActionListener
 					dateList.setEnabled(true);	
 					dateList.setSelectedIndex(-1);
 				}
+				ticketPriceText.setText("");
 			}
 			else if(e.getActionCommand() == "chose theater")
 			{	
@@ -893,28 +1035,52 @@ public class GUI extends JFrame implements ActionListener
 					dateList.setEnabled(true);
 					dateList.setSelectedIndex(-1);
 				}
+				ticketPriceText.setText("");
+			}
+			else if(e.getActionCommand() == "chose date")
+			{
+				//TODO: total price for tickets calculated here
+				double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+				ticketPriceText.setText("Total Price: $" +  price);
+			}
+			else if(e.getActionCommand() == "chose num tickets")
+			{
+				if(!ticketPriceText.getText().equals(""))
+				{
+					//TODO: total price for tickets calculated here
+					double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+					ticketPriceText.setText("Total Price: $" +  price);
+				}
 			}
 			else if(e.getActionCommand() == "buy ticket")
 			{
 				if(dateList.getSelectedIndex() != -1)
 				{
-					String numCheck = ticketNumText.getText();
-					switch(numCheck)
+					if(ticketNumList.getSelectedIndex() != -1)
 					{
-						case "1":
-						case "2":
-						case "3":
-						case "4":
-						case "5":
-						case "6":
-						case "7":
-						case "8":
-						case "9":
-							//TODO: Need DAO logic for adding ticket to DB
-							break;
-						default: 
-							JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);
+						String numTickets = (String) ticketNumList.getSelectedItem();
+						String date = (String) dateList.getSelectedItem();
+						String theater = (String) theaterList.getSelectedItem();
+						String movie = (String) movieList.getSelectedItem();
+						String priceString = ticketPriceText.getText();
+						double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
+						
+						//TODO: Need logic to place ticket order into DB
 					}
+					else JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);			
+				}
+				else JOptionPane.showMessageDialog(frame,"You must select a theater, movie, and date/time.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);
+			}
+			else if(e.getActionCommand() == "buy guest ticket")
+			{
+				if(dateList.getSelectedIndex() != -1)
+				{
+					if(ticketNumList.getSelectedIndex() != -1)
+					{	
+						createGuestInfoPanel();
+						layoutManager.show(contentPanel, "Guest Info");
+					}
+					else JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);			
 				}
 				else JOptionPane.showMessageDialog(frame,"You must select a theater, movie, and date/time.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);
 			}
@@ -922,6 +1088,44 @@ public class GUI extends JFrame implements ActionListener
 			theaterList.addActionListener(this);
 			movieList.addActionListener(this);
 			dateList.addActionListener(this);
+		}
+		else if(guestInfoPanel.isShowing())
+		{
+			if(e.getActionCommand() == "cancel guest purchase")
+			{
+				ccnText.setText("");
+				ccvText.setText("");
+				ccNameText.setText("");
+				zipText.setText("");
+				ccExpText.setText("");
+				street1Text.setText("");
+				street2Text.setText("");
+				cityText.setText("");
+				stateText.setText("");
+				emailText.setText("");
+				
+				JOptionPane.showMessageDialog(frame,"Your ticket purchase has been cancelled","Ticket Purchase Cancel",JOptionPane.INFORMATION_MESSAGE);
+				layoutManager.show(contentPanel, "Guest Tabs");
+			}
+			else if(e.getActionCommand() == "confirm guest purchase")
+			{
+				if(!ccnText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty()  && !ccvText.getText().isEmpty()  
+					&& !ccvText.getText().isEmpty()  && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty()
+					&& !ccvText.getText().isEmpty() && !ccvText.getText().isEmpty())
+				{
+					String numTickets = (String) ticketNumList.getSelectedItem();
+					String date = (String) dateList.getSelectedItem();
+					String theater = (String) theaterList.getSelectedItem();
+					String movie = (String) movieList.getSelectedItem();
+					String priceString = ticketPriceText.getText();
+					double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
+					
+					//TODO: Need logic to place ticket order into DB
+					JOptionPane.showMessageDialog(frame,"Your ticket purchase has been placed","Ticket Purchase Placed",JOptionPane.INFORMATION_MESSAGE);
+					layoutManager.show(contentPanel,"Guest Tabs");
+				}
+				else JOptionPane.showMessageDialog(frame,"Must fill out all info fields","Purchase Error",JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		frame.pack();
 	}
