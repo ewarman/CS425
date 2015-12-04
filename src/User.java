@@ -98,27 +98,38 @@ public class User {
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			
+			//remove old record and add updated record in DB
 			Statement st1 = conn.createStatement();
-			//st1.executeUpdate("UPDATE AAHMED31.THEATERUSERS SET PASSWORD='"+pswd+"',CCN='"+c+"',PHONE='"+ph+"',EMAIL='"+email+"' WHERE USERNAME='"+username+"'");
 			Statement st2 = conn.createStatement();
 			Statement st3 = conn.createStatement();
 			Statement st4 = conn.createStatement();
-			//st2.executeUpdate("UPDATE AAHMED31.CC SET CCN='"+c+"',CCN_CODE='"+cvv+"',EXP_DATE=TO_DATE('"+date+"', 'yyyy-mm-dd') ,STREET1='"+s1+"',STREET2='"+s2+"',CITY='"+city+"',STATE='"+st+"',ZIP='"+zip+"' WHERE CCN='"+cc+"'");
-			st3.executeUpdate("Delete from AAHMED31.THEATERUSERS Where Name = '"+name+"'");
-			st4.executeUpdate("Delete from AAHMED31.CC Where CC_Name = '"+name+"'");
-			st1.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+c+"', '"+cvv+"', '"+name+"', 'Visa', date '"+d+"', '"+s1+"', '"+s2+"', '"+city+"', '"+st+"', '"+zip+"')");
+			st1.executeUpdate("Delete from AAHMED31.THEATERUSERS Where Name = '"+name+"'");
+			st2.executeUpdate("Delete from AAHMED31.CC Where CC_Name = '"+name+"'");
+			st3.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+c+"', '"+cvv+"', '"+name+"', 'Visa', date '"+d+"', '"+s1+"', '"+s2+"', '"+city+"', '"+st+"', '"+zip+"')");
 			System.out.println("CC info added");
-			st2.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+username+"', '"+password+"', '"+name+"', '"+c+"', '"+phone+"', '"+email+"')");
+			st4.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+username+"', '"+password+"', '"+name+"', '"+c+"', '"+phone+"', '"+email+"')");
+			
+			//Update user object values
+			password = pswd;
+			cc=c;
+			phone = ph;
+			email = eml;
+			ccn.cvv = cvv;
+			ccn.name = name;
+			ccn.expDate = d;
+			ccn.street1 = s1;
+			ccn.street2 = s2;
+			ccn.city = city;
+			ccn.state = st;
+			ccn.zip = zip;
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
 	}
 	
-	public boolean purchaseTicket(int price) {
-		CreditCardCo auth = new CreditCardCo();
-		int bal = auth.getBalance(ccn.ccn);
-		if (bal<price) return true;
-		else return false;
+	public void purchaseTicket() {
+		
 	}
 }

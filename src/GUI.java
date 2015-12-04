@@ -10,6 +10,9 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class GUI extends JFrame implements ActionListener
 {
 	User user = new User();
@@ -895,7 +898,6 @@ public class GUI extends JFrame implements ActionListener
 				 email = emailText.getText();
 				 String cvv = ccvText.getText();
 				 String ccName = ccNameText.getText();
-				 //java.sql.Date date = java.sql.Date.valueOf(ccExpText.getText());
 				 String date = ccExpText.getText();
 				 String zip = zipText.getText();
 				 String s1 = street1Text.getText();
@@ -1036,6 +1038,15 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(userTicketTab.isShowing())
 		{
+			ShowingsList shows = new ShowingsList();
+			shows.setTitles();
+			shows.setTheaters();
+			HashSet<String> titles = shows.getUniqueTitles();
+			HashSet<Integer> theaters = shows.getUniqueTheaters();
+			
+			//TODO: Get price from shows object!
+			double unitPrice = 10.25;
+			
 			theaterList.removeActionListener(this);
 			movieList.removeActionListener(this);
 			dateList.removeActionListener(this);
@@ -1050,11 +1061,9 @@ public class GUI extends JFrame implements ActionListener
 				movieList.setEnabled(true);
 				dateList.setEnabled(false);
 				
-				//TODO: Need to add all possible movies
-				
-				//TESTING ONLY
-				movieList.addItem(test1);
-				movieList.addItem(test2);
+				for (String title : titles) {
+					movieList.addItem(title);
+				}
 				
 				theaterList.setSelectedIndex(-1);
 				movieList.setSelectedIndex(-1);
@@ -1068,11 +1077,9 @@ public class GUI extends JFrame implements ActionListener
 				theaterList.removeAllItems();
 				dateList.removeAllItems();
 				
-				//TODO: Need to add all possible theaters
-				
-				//TESTING ONLY
-				theaterList.addItem(test2);
-				theaterList.addItem(test3);
+				for (int theater : theaters) {
+					theaterList.addItem(Integer.toString(theater));
+				}
 				
 				movieList.setEnabled(false);
 				theaterList.setEnabled(true);
@@ -1090,11 +1097,17 @@ public class GUI extends JFrame implements ActionListener
 				{
 					theaterList.removeAllItems();
 					
-					//TODO: Need to add theaters where chosen movie is playing
+					ArrayList<Showing> copy = new ArrayList<Showing>(shows.schedule);
 					
-					//remove once dao's in place
-					theaterList.addItem(test2);
-					theaterList.addItem(test3);
+					for (Showing s : copy) {
+						if (!s.title.equals(movieList.getSelectedItem())) {
+							shows.schedule.remove(s);
+						}
+					}
+					theaters = shows.getUniqueTheaters();
+					for (int theater : theaters) {
+						theaterList.addItem(Integer.toString(theater));
+					}
 					
 					theaterList.setEnabled(true);
 					dateList.setEnabled(false);
@@ -1106,10 +1119,12 @@ public class GUI extends JFrame implements ActionListener
 				{
 					dateList.removeAllItems();
 					
-					//TODO: Need to add dates when chosen movie is playing at chosen theater
+					for (Showing s : shows.schedule) {
+						if (Integer.toString(s.theater).equals(theaterList.getSelectedItem()) && s.title.equals(movieList.getSelectedItem())) {
+							dateList.addItem(s.date.toString());
+						}
+					}
 					
-					//remove once dao's in place
-					dateList.addItem(test3);
 					
 					dateList.setEnabled(true);	
 					dateList.setSelectedIndex(-1);
@@ -1122,11 +1137,18 @@ public class GUI extends JFrame implements ActionListener
 				{
 					movieList.removeAllItems();
 					
-					//TODO: Need to add movies playing at chosen theater
+					ArrayList<Showing> copy = new ArrayList<Showing>(shows.schedule);
+					for (Showing s : copy) {
+						if (!(Integer.toString(s.theater)).equals(theaterList.getSelectedItem())) {
+							shows.schedule.remove(s);
+						}
+					}
 					
-					//remove once dao's in place
-					movieList.addItem(test1);
-					movieList.addItem(test2);
+					
+					titles = shows.getUniqueTitles();
+					for (String title : titles) {
+						movieList.addItem(title);
+					}
 					
 					movieList.setEnabled(true);
 					dateList.setEnabled(false);
@@ -1137,21 +1159,23 @@ public class GUI extends JFrame implements ActionListener
 				else
 				{
 					dateList.removeAllItems();
+
+					for (Showing s : shows.schedule) {
+						if (s.title.equals(movieList.getSelectedItem()) && Integer.toString(s.theater).equals(theaterList.getSelectedItem())) {
+							dateList.addItem(s.date.toString());
+						}
+					}
 					
-					//TODO: Need to add dates when chosen movie is playing at chosen theater
-					
-					//remove once dao's in place
-					dateList.addItem(test3);
-					
-					dateList.setEnabled(true);
-					dateList.setSelectedIndex(-1);
-				}
+				dateList.setEnabled(true);
+				dateList.setSelectedIndex(-1);
 				ticketPriceText.setText("");
+				}
 			}
+				
 			else if(e.getActionCommand() == "chose date")
 			{
 				//TODO: total price for tickets calculated here
-				double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+				double price = unitPrice * Double.parseDouble((String)ticketNumList.getSelectedItem());
 				ticketPriceText.setText("Total Price: $" +  price);
 			}
 			else if(e.getActionCommand() == "chose num tickets")
@@ -1165,6 +1189,7 @@ public class GUI extends JFrame implements ActionListener
 			}
 			else if(e.getActionCommand() == "buy ticket")
 			{
+				
 				if(dateList.getSelectedIndex() != -1)
 				{
 					if(ticketNumList.getSelectedIndex() != -1)
@@ -1176,6 +1201,7 @@ public class GUI extends JFrame implements ActionListener
 						String priceString = ticketPriceText.getText();
 						double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
 						
+						//user.purchaseTicket(numTickets, date, theater, movie, priceString);
 						//TODO: Need logic to place ticket order into DB
 					}
 					else JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);			
