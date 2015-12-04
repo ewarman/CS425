@@ -197,4 +197,64 @@ public class User {
 			System.err.println(ex.getMessage()); 
 		}
 	}
+	
+	public String incrementPoints(char c) {
+		System.out.println(totPoints);
+		System.out.println(curPoints);
+		System.out.println(rewardLevel);
+		
+		HashMap<String, int []> pointsMap = new HashMap<String,int []>();
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT * FROM EWARMAN.REWARDS");
+			ResultSet rs = st.getResultSet();
+			while (rs.next()) {
+				int [] values = {rs.getInt(2), rs.getInt(3)};
+				pointsMap.put(rs.getString(1), values);
+			}
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		
+		int bonus = 0;
+		if (c=='t') {
+			bonus = pointsMap.get(rewardLevel)[1];
+		}
+		if (c=='c') {
+			bonus = pointsMap.get(rewardLevel)[0];
+		}
+		totPoints += bonus;
+		curPoints += bonus;
+		
+		String oldLevel = rewardLevel;
+		
+		updatePoints();
+		getPointsInfo();
+		
+		System.out.println(totPoints);
+		System.out.println(curPoints);
+		System.out.println(rewardLevel);
+		if (!rewardLevel.equals(oldLevel)) {
+			return "Your reward level increased from "+oldLevel+" to "+rewardLevel;
+		}
+		else return "";
+	}
+	
+	public void updatePoints() {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			System.out.println("UPDATE AAHMED31.POINTS SET CURRENT_POINTS="+curPoints+", TOTAL_POINTS="+totPoints+" WHERE USERNAME ='"+username+"')");
+			st.executeQuery("UPDATE AAHMED31.POINTS SET CURRENT_POINTS='"+curPoints+"', TOTAL_POINTS='"+totPoints+"' WHERE USERNAME ='"+username+"'");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
 }

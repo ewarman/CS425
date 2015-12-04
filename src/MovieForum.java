@@ -62,4 +62,30 @@ public class MovieForum {
 		}
 		return directors;
 	}
+	
+	public void addMovieThread(String username, String str, String txt) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO EWARMAN.MOVIETHREADS VALUES (null, '"+username+"', '"+str+"', null, null, "+txt+"')");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
+	
+	public void addStarThread(String username, String str, String txt) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO EWARMAN.MOVIETHREADS VALUES (null, '"+username+"', null, '"+str+"', null, '"+txt+"')");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
 }

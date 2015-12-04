@@ -926,7 +926,7 @@ public class GUI extends JFrame implements ActionListener
 				
 				ArrayList<MovieThread> movies = forum.arrangeByTitle();
 				for(MovieThread thread : movies) {
-					threadList.addItem(thread.movie);
+					threadList.addItem(thread.movie+": "+thread.text);
 				}
 
 				commentList.removeAllItems();
@@ -941,7 +941,7 @@ public class GUI extends JFrame implements ActionListener
 				
 				ArrayList<MovieThread> stars = forum.arrangeByStars();
 				for(MovieThread thread : stars) {
-					threadList.addItem(thread.star);
+					threadList.addItem(thread.star+": "+thread.text);
 				}
 
 				commentList.removeAllItems();
@@ -958,7 +958,8 @@ public class GUI extends JFrame implements ActionListener
 				{
 					ArrayList<MovieThread> movies = forum.arrangeByTitle();
 					for (MovieThread thread: movies) {
-						if (thread.movie.equals(threadList.getSelectedItem().toString())) {
+						String [] parts = threadList.getSelectedItem().toString().split(":");
+						if (thread.movie.equals(parts[0])) {
 							for (Comment comment : thread.comments) {
 								commentList.addItem(comment.text);
 							}
@@ -969,7 +970,8 @@ public class GUI extends JFrame implements ActionListener
 				{
 					ArrayList<MovieThread> stars = forum.arrangeByStars();
 					for (MovieThread thread: stars) {
-						if (thread.star.equals(threadList.getSelectedItem().toString())) {
+						String [] parts = threadList.getSelectedItem().toString().split(":");
+						if (thread.star.equals(parts[0])) {
 							for (Comment comment : thread.comments) {
 								commentList.addItem(comment.text);
 							}
@@ -1002,35 +1004,39 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(forumCreatePanel.isShowing())
 		{
+			MovieForum forum = new MovieForum();
 			if(e.getActionCommand() == "submit thread")
 			{
 				if(createMovieThreadButton.isSelected())
 				{
-					movieThreads.add(new Vector<String>());
-					movieThreads.get(0).add(createThreadText.getText());
-					movieThreads.get(movieThreads.size()-1).add(createCommentText.getText());
+					forum.addMovieThread(user.username, createThreadText.getText(),createCommentText.getText());
+					String msg = user.incrementPoints('t');
+					if (!msg.equals("")) {
+						JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+					}
 				}
 				else
 				{
-					starThreads.add(new Vector<String>());
-					starThreads.get(0).add(createThreadText.getText());
-					starThreads.get(starThreads.size()-1).add(createCommentText.getText());
-
+					forum.addStarThread(user.username, createThreadText.getText(),createCommentText.getText());
+					String msg = user.incrementPoints('t');
+					if (!msg.equals("")) {
+						JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+					}
 				}
 
 				layoutManager.show(contentPanel, "User Tabs");
 			}
 			else if(e.getActionCommand() == "submit comment")
 			{
-				if(createMovieThreadButton.isSelected())
-				{
-					int i = movieThreads.get(0).indexOf(createThreadText.getText());
-					movieThreads.get(i+1).add(createCommentText.getText());
-				}
-				else
-				{
-					int i = starThreads.get(0).indexOf(createThreadText.getText());
-					starThreads.get(i+1).add(createCommentText.getText());
+				String []  parts = threadList.getSelectedItem().toString().split(":");
+				for (MovieThread thread : forum.mf) {
+					if (thread.text.equals(parts[1].trim())) {
+						thread.addComment(thread.id, user.username, createCommentText.getText());
+						String msg = user.incrementPoints('c');
+						if (!msg.equals("")) {
+							JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+						}
+					}
 				}
 				layoutManager.show(contentPanel, "User Tabs");
 			}

@@ -34,11 +34,11 @@ public class TheaterThread {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT COMMENT_NUMBER, USERNAME, TEXT FROM AAHMED31.THEATERCOMMENTS WHERE THREAD_ID="+i);
+			st.executeQuery("SELECT USERNAME, TEXT FROM AAHMED31.THEATERCOMMENTS WHERE THREAD_ID="+i);
 			ResultSet rs = st.getResultSet();
 
 			while (rs.next()) {
-				Comment comment = new Comment(rs.getInt(1), rs.getString(2), rs.getString(3));
+				Comment comment = new Comment(rs.getString(1), rs.getString(2));
 				comments.add(comment);
 			}
 			conn.close(); 
@@ -50,17 +50,14 @@ public class TheaterThread {
 }
 
 class Comment {
-	int number;
 	String username, text;
 	
 	public Comment() {
-		number = 0;
 		username = "";
 		text = "";
 	}
 	
-	public Comment(int n, String u, String t) {
-		number = n;
+	public Comment(String u, String t) {
 		username = u;
 		text = t;
 	}
