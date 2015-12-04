@@ -27,6 +27,8 @@ public class User {
 		email = "";
 		cc = "";
 		ccn = new CreditCard();
+		curPoints = 0;
+		totPoints = 0;
 	}
 	
 	public User(String u, String p, String n, String c, String ph, String e) {
@@ -36,6 +38,53 @@ public class User {
 		cc = c;
 		ccn = new CreditCard();
 		ccn.getInfo(cc);
+		phone = ph;
+		email = e;
+		curPoints = 0;
+		totPoints = 0;
+	}
+	
+	public void registerCC(String c, String cv, String n, Date e, String s1, String s2, String ci, String st, String z){
+		ccn = new CreditCard(c, cv, n, "Visa", e, s1, s2, c, st, z);
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st1 = conn.createStatement();
+			st1.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+c+"', '"+cv+"', '"+n+"', 'Visa', date '"+e+"', '"+s1+"', '"+s2+"', '"+ci+"', '"+st+"', '"+z+"')");
+			conn.close();
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		ccn.ccn = c;
+		ccn.cvv = cv;
+		ccn.name = n;
+		ccn.cardType = "Visa";
+		ccn.street1 = s1;
+		ccn.street2 = s2;
+		ccn.expDate = e;
+		ccn.city = ci;
+		ccn.state = st;
+		ccn.zip = z;
+	}
+	
+	public void registerUser(String u, String p, String n, String c, String ph, String e) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st1 = conn.createStatement();
+			st1.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+u+"', '"+p+"', '"+n+"', '"+c+"', '"+ph+"', '"+e+"')");
+			Statement st2 = conn.createStatement();
+			st2.executeUpdate("INSERT INTO AAHMED31.POINTS VALUES ('"+u+"', '"+curPoints+"', '"+totPoints+"')");
+			conn.close();
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		username = u;
+		password = p;
+		name = n;
+		cc = c;
 		phone = ph;
 		email = e;
 	}

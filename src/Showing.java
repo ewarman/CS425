@@ -2,10 +2,6 @@ package src;
 import java.sql.Date;
 
 public class Showing {
-
-	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
-	public static final String USER = "ewarman";
-	public static final String PSWD = "A20317755";
 	
 	String title;
 	double price;
