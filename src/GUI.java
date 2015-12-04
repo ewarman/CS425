@@ -16,6 +16,8 @@ import java.util.HashSet;
 public class GUI extends JFrame implements ActionListener
 {
 	User user = new User();
+	Guest guest = new Guest();
+	Admin admin = new Admin();
 	
 	//Test Variables
 	String username = "test user";
@@ -33,6 +35,9 @@ public class GUI extends JFrame implements ActionListener
 	String thread2 = "thread2";
 	String comment1 = "comment1";
 	String comment2 = "comment2";
+	
+	Showing selected;
+	
 	Vector<Vector<String>> movieThreads = new Vector<Vector<String>>();
 	Vector<Vector<String>> starThreads = new Vector<Vector<String>>();
 	Vector<String> Movies = new Vector<String>();
@@ -1044,7 +1049,7 @@ public class GUI extends JFrame implements ActionListener
 			HashSet<String> titles = shows.getUniqueTitles();
 			HashSet<Integer> theaters = shows.getUniqueTheaters();
 			
-			//TODO: Get price from shows object!
+			//TODO: Get price from shows object
 			double unitPrice = 10.25;
 			
 			theaterList.removeActionListener(this);
@@ -1174,35 +1179,49 @@ public class GUI extends JFrame implements ActionListener
 				
 			else if(e.getActionCommand() == "chose date")
 			{
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
 				//TODO: total price for tickets calculated here
-				double price = unitPrice * Double.parseDouble((String)ticketNumList.getSelectedItem());
+				double price = selected.price * Double.parseDouble((String)ticketNumList.getSelectedItem());
 				ticketPriceText.setText("Total Price: $" +  price);
 			}
 			else if(e.getActionCommand() == "chose num tickets")
 			{
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
+				
 				if(!ticketPriceText.getText().equals(""))
 				{
 					//TODO: total price for tickets calculated here
-					double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+					double price = selected.price * Double.parseDouble((String)ticketNumList.getSelectedItem());
 					ticketPriceText.setText("Total Price: $" +  price);
 				}
 			}
 			else if(e.getActionCommand() == "buy ticket")
 			{
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
 				
 				if(dateList.getSelectedIndex() != -1)
 				{
 					if(ticketNumList.getSelectedIndex() != -1)
 					{
-						String numTickets = (String) ticketNumList.getSelectedItem();
-						String date = (String) dateList.getSelectedItem();
-						String theater = (String) theaterList.getSelectedItem();
-						String movie = (String) movieList.getSelectedItem();
-						String priceString = ticketPriceText.getText();
-						double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
-						
-						//user.purchaseTicket(numTickets, date, theater, movie, priceString);
-						//TODO: Need logic to place ticket order into DB
+						user.purchaseTicket(selected.sid, Integer.parseInt(ticketNumList.getSelectedItem().toString()));
 					}
 					else JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);			
 				}
@@ -1250,14 +1269,11 @@ public class GUI extends JFrame implements ActionListener
 					&& !ccExpText.getText().isEmpty()  && !street1Text.getText().isEmpty() && !street2Text.getText().isEmpty() && !cityText.getText().isEmpty()
 					&& !stateText.getText().isEmpty() && !emailText.getText().isEmpty())
 				{
-					String numTickets = (String) ticketNumList.getSelectedItem();
-					String date = (String) dateList.getSelectedItem();
-					String theater = (String) theaterList.getSelectedItem();
-					String movie = (String) movieList.getSelectedItem();
-					String priceString = ticketPriceText.getText();
-					double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
+					guest.registerCC(ccnText.getText(),ccvText.getText(),ccNameText.getText(),java.sql.Date.valueOf(ccExpText.getText()),street1Text.getText(),street2Text.getText(), cityText.getText(), stateText.getText(),zipText.getText());
+					guest.registerUser(ccNameText.getText(),ccnText.getText(),emailText.getText());
 					
-					//TODO: Need logic to place ticket order into DB
+					guest.purchaseTicket(selected.sid, Integer.parseInt(ticketNumList.getSelectedItem().toString()));
+					
 					JOptionPane.showMessageDialog(frame,"Your ticket purchase has been placed","Ticket Purchase Placed",JOptionPane.INFORMATION_MESSAGE);
 					layoutManager.show(contentPanel,"Guest Tabs");
 				}

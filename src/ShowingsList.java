@@ -3,7 +3,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,11 +22,11 @@ public class ShowingsList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT ROOM_ID, MOVIE_ID, SHOW_DATE, TICKET_PRICE FROM AAHMED31.SCHEDULE");
+			st.executeQuery("SELECT ROOM_ID, MOVIE_ID, SHOW_DATE, TICKET_PRICE, SHOWING_ID FROM AAHMED31.SCHEDULE");
 			ResultSet rs = st.getResultSet();
 
 			while (rs.next()) {
-				Showing show = new Showing(rs.getDouble(4),rs.getInt(2), rs.getInt(1), rs.getDate(3));
+				Showing show = new Showing(rs.getDouble(4),rs.getInt(2), rs.getInt(1), rs.getDate(3), rs.getInt(5));
 				schedule.add(show);
 			}
 			conn.close(); 

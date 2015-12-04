@@ -4,6 +4,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Date;
+import java.util.*;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 
 
 public class User {
@@ -129,7 +132,20 @@ public class User {
 		}
 	}
 	
-	public void purchaseTicket() {
-		
+	public void purchaseTicket(int sid, int nt) {
+		java.util.Date d = new java.util.Date();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String ddf = df.format(d).toString();
+		Date dbd = Date.valueOf(ddf);
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st1 = conn.createStatement();
+			st1.executeUpdate("INSERT INTO AAHMED31.TICKETS " + "VALUES ('"+cc+"', '"+sid+"', '"+nt+"', date '"+dbd+"')");
+			conn.close();
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
 	}
 }

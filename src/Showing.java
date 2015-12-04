@@ -1,8 +1,4 @@
 package src;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Date;
 
 public class Showing {
@@ -16,12 +12,17 @@ public class Showing {
 	int theater;
 	int mid;
 	int rid;
+	int sid;
 	Date date;
 	
-	public Showing(double p, int mi, int ri, Date d) {
+	public Showing() {
+	}
+	
+	public Showing(double p, int mi, int ri, Date d, int si) {
 		price = p;
 		mid = mi;
 		rid = ri;
+		sid = si;
 		title = "";
 		theater = 0;
 		date = d;
