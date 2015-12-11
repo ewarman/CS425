@@ -42,7 +42,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT EMP_ID, JOB_DATE, THEATER_ID, JOB_TYPE FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID="+emp+";");
+			st.executeQuery("SELECT EMP_ID, JOB_DATE, THEATER_ID, JOB_TYPE FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID="+emp+"");
 			ResultSet rs = st.getResultSet();
 			while (rs.next()) {
 				EmpSchedule empsched = new EmpSchedule(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getString(4));
@@ -50,7 +50,7 @@ public class EmployeeList {
 			}
 			
 			Statement st2 = conn.createStatement();
-			st2.executeQuery("SELECT * FROM AAHMED31.JOBTRAINING WHERE EMP_ID = "+emp+";");
+			st2.executeQuery("SELECT * FROM AAHMED31.JOBTRAINING WHERE EMP_ID = "+emp+"");
 			ResultSet rs2 = st2.getResultSet();
 			int id = rs2.getInt(1);
 			boolean j = (rs2.getInt(2) == 1);
@@ -81,7 +81,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"' AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"';");
+			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"' AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -94,7 +94,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"';");
+			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"'");
 			ResultSet rs = st.getResultSet();
 			if(rs.next()){
 				sameDate = true;
@@ -115,7 +115,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT * FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"';");
+			st.executeQuery("SELECT * FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"'");
 			ResultSet rs = st.getResultSet();
 			while (rs.next()) {
 				EmpShift shift = new EmpShift(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getString(4));

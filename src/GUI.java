@@ -1670,6 +1670,8 @@ public class GUI extends JFrame implements ActionListener
 				else
 				{
 					//TODO: Logic to remove selected shift from DB
+					String selectedShift = (String) removeShiftList.getSelectedItem();
+					
 				}
 			}
 		}
