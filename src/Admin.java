@@ -13,7 +13,7 @@ public class Admin {
 	
 	int id, theater;
 	String type, username, password, name, address, phone, ssn;
-	Vector<Employee> emps;
+	Vector<EmployeeTrain> emps;
 	
 	public Admin() {
 		type = "";
@@ -25,7 +25,7 @@ public class Admin {
 		ssn = "";
 		id = 0;
 		theater = 0;
-		emps = new Vector<Employee>();
+		emps = new Vector<EmployeeTrain>();
 	}
 	
 	public Admin(int i, int th, String t, String u, String p, String n, String a, String ph, String s) {
@@ -38,7 +38,7 @@ public class Admin {
 		ssn = s;
 		id = i;
 		theater = th;
-		emps = new Vector<Employee>();
+		emps = new Vector<EmployeeTrain>();
 	}
 	
 	public boolean login(String usr, String pswd) {
@@ -68,17 +68,14 @@ public class Admin {
 			Statement st2 = conn.createStatement();
 			st2.executeQuery("SELECT * FROM AAHMED31.JOBTRAINING");
 			ResultSet rs2 = st2.getResultSet();
-			if(rs2.next())
+			while(rs2.next())
 			{
-				for(int i=0;i<rs2.getFetchSize();i++)
-				{
-					int id = rs2.getInt(1);
-					boolean j = (rs2.getInt(2) == 1);
-					boolean s = (rs2.getInt(3) == 1);
-					boolean t = (rs2.getInt(4) == 1);
-					
-					emps.add(new Employee(id,j,s,t));
-				}
+				int id = rs2.getInt(1);
+				boolean j = (rs2.getInt(2) == 1);
+				boolean s = (rs2.getInt(3) == 1);
+				boolean t = (rs2.getInt(4) == 1);
+				
+				emps.add(new EmployeeTrain(id,j,s,t));
 			}
 			conn.close(); 
 		} catch (Exception ex) { 
@@ -117,14 +114,14 @@ public class Admin {
 		return user;
 	}
 	
-	class Employee
+	class EmployeeTrain
 	{
 		int id;
 		boolean janitor;
 		boolean salesrep;
 		boolean ticketmaster;
 		
-		protected Employee(int i, boolean j, boolean s, boolean t)
+		protected EmployeeTrain(int i, boolean j, boolean s, boolean t)
 		{
 			id = i;
 			janitor = j;
