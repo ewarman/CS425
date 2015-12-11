@@ -14,6 +14,7 @@ public class Admin {
 	int id, theater;
 	String type, username, password, name, address, phone, ssn;
 	Vector<EmployeeTrain> emps;
+	Vector<String> users;
 	
 	public Admin() {
 		type = "";
@@ -26,6 +27,7 @@ public class Admin {
 		id = 0;
 		theater = 0;
 		emps = new Vector<EmployeeTrain>();
+		users = new Vector<String>();
 	}
 	
 	public Admin(int i, int th, String t, String u, String p, String n, String a, String ph, String s) {
@@ -39,6 +41,7 @@ public class Admin {
 		id = i;
 		theater = th;
 		emps = new Vector<EmployeeTrain>();
+		users = new Vector<String>();
 	}
 	
 	public boolean login(String usr, String pswd) {
@@ -79,6 +82,15 @@ public class Admin {
 					emps.add(new EmployeeTrain(id,j,s,t));
 
 			}
+			
+			Statement st3 = conn.createStatement();
+			st3.executeQuery("SELECT username FROM AAHMED31.THEATERUSERS WHERE username IS NOT NULL");
+			ResultSet rs3 = st3.getResultSet();
+			while(rs3.next())
+			{
+				users.add(rs3.getString(1));
+			}
+			
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 

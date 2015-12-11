@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -75,6 +80,7 @@ public class GUI extends JFrame implements ActionListener
 	JPanel forumCreatePanel = new JPanel();
 	JPanel guestInfoPanel = new JPanel();
 	JPanel registerPanel = new JPanel();
+	JPanel empInfoPanel = new JPanel();
 	JPanel empAddShiftTab = new JPanel();
 	JPanel empRemoveShiftTab = new JPanel();
 	JPanel empSeeInfoTab = new JPanel();
@@ -130,6 +136,8 @@ public class GUI extends JFrame implements ActionListener
 	JButton removeShiftButton;
 	JButton addMovieButton;
 	JButton removeMovieButton;
+	JButton seeInfoButton;
+	JButton returnButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
@@ -157,6 +165,7 @@ public class GUI extends JFrame implements ActionListener
 	JComboBox<String> removeMovieList;
 	JComboBox<String> removeMovieDateList;
 	JComboBox<String> removeMovieTimeList;
+	JComboBox<String> guestInfoList;
 	
 	//Other
 	Properties p1;
@@ -411,13 +420,13 @@ public class GUI extends JFrame implements ActionListener
 		empRemoveShiftTab = new JPanel(new GridLayout(3,1));
 		createRemoveShiftTab();
 		
-		empSeeInfoTab = new JPanel();
+		empSeeInfoTab = new JPanel(new GridLayout(3,1));
 		createEmpSeeInfoTab();
 	
 		empAddMoviesTab = new JPanel(new GridLayout(3,1));
 		createAddMoviesTab();
 		
-		empRemoveMoviesTab = new JPanel();
+		empRemoveMoviesTab = new JPanel(new GridLayout(3,1));
 		createRemoveMoviesTab();
 		
 		empTabbedPane.setVisible(false);
@@ -580,12 +589,147 @@ public class GUI extends JFrame implements ActionListener
 	{
 		if(admin.type.equalsIgnoreCase("web admin") || admin.type.equalsIgnoreCase("owner"))
 		{
+			JLabel l = new JLabel("Guest Username");
+			
+			guestInfoList = new JComboBox<String>();
+			for(int i=0;i<admin.users.size();i++)
+			{
+				guestInfoList.addItem(admin.users.get(i));
+			}
+			guestInfoList.setSelectedIndex(-1);
+			
+			seeInfoButton = new JButton("View Info");
+			
+			empSeeInfoTab.add(l);
+			empSeeInfoTab.add(guestInfoList);
+			empSeeInfoTab.add(seeInfoButton);
 			
 		}
 		else
 		{
 			empSeeInfoTab.add(new JLabel("Unable to access"));
 		}
+
+		empTabbedPane.add(empSeeInfoTab,"User Info");
+	}
+	
+	private void createEmpInfoPanel()
+	{
+		empInfoPanel = new JPanel(new GridLayout(2,1));
+		
+		JPanel userInfoMain = new JPanel(new GridLayout(8,4));
+		
+		user = admin.viewUser((String)guestInfoList.getSelectedItem());
+		
+		JLabel usernameLabel = new JLabel("Username: ");
+		usernameText = new JTextField(user.username);
+		usernameText.setEnabled(false);
+		
+		JLabel passwordLabel = new JLabel("Password: ");
+		passwordText = new JTextField(user.password);
+		passwordText.setEnabled(false);
+		
+		JLabel nameLabel = new JLabel("Name: ");
+		nameText = new JTextField(user.name);
+		nameText.setEnabled(false);
+		
+		JLabel phoneLabel = new JLabel("Phone: ");
+		phoneText = new JTextField(user.phone);
+		phoneText.setEnabled(false);
+		
+		JLabel emailLabel = new JLabel("Email: ");
+		emailText = new JTextField(user.email);
+		emailText.setEnabled(false);
+		
+		JLabel pointsLabel = new JLabel("Reward Points: ");
+		pointsText = new JTextField(String.valueOf(user.curPoints));
+		pointsText.setEnabled(false);
+		
+		JLabel statusLabel = new JLabel("Reward Level: ");
+		statusText = new JTextField(user.rewardLevel);
+		statusText.setEnabled(false);
+		
+		JLabel ccnLabel = new JLabel("CCN: ");
+		ccnText = new JTextField(user.ccn.ccn);
+		ccnText.setEnabled(false);
+		
+		JLabel ccvLabel = new JLabel("CVV: ");
+		ccvText = new JTextField(user.ccn.cvv);
+		ccvText.setEnabled(false);
+		
+		JLabel ccNameLabel = new JLabel("Name on CC: ");
+		ccNameText = new JTextField(user.ccn.name);
+		ccNameText.setEnabled(false);
+		
+		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
+		ccExpText = new JTextField(user.ccn.expDate.toString());
+		ccExpText.setEnabled(false);
+		
+		JLabel street1Label = new JLabel("Street 1: ");
+		street1Text = new JTextField(user.ccn.street1);
+		street1Text.setEnabled(false);
+		
+		JLabel street2Label = new JLabel("Street 2: ");
+		street2Text = new JTextField(user.ccn.street2);
+		street2Text.setEnabled(false);
+		
+		JLabel cityLabel = new JLabel("City: ");
+		cityText = new JTextField(user.ccn.city);
+		cityText.setEnabled(false);
+		
+		JLabel stateLabel = new JLabel("State: ");
+		stateText = new JTextField(user.ccn.state);
+		stateText.setEnabled(false);
+		
+		JLabel zipLabel = new JLabel("Zip Code: ");
+		zipText = new JTextField(user.ccn.zip);
+		zipText.setEnabled(false);
+		
+		userInfoMain.add(usernameLabel);
+		userInfoMain.add(usernameText);
+		userInfoMain.add(ccnLabel);
+		userInfoMain.add(ccnText);
+		userInfoMain.add(passwordLabel);
+		userInfoMain.add(passwordText);
+		userInfoMain.add(ccvLabel);
+		userInfoMain.add(ccvText);
+		userInfoMain.add(nameLabel);
+		userInfoMain.add(nameText);
+		userInfoMain.add(ccNameLabel);
+		userInfoMain.add(ccNameText);
+		userInfoMain.add(phoneLabel);
+		userInfoMain.add(phoneText);
+		userInfoMain.add(ccExpLabel);
+		userInfoMain.add(ccExpText);
+		userInfoMain.add(emailLabel);
+		userInfoMain.add(emailText);
+		userInfoMain.add(zipLabel);
+		userInfoMain.add(zipText);
+		userInfoMain.add(pointsLabel);
+		userInfoMain.add(pointsText);
+		userInfoMain.add(statusLabel);
+		userInfoMain.add(statusText);
+		userInfoMain.add(street1Label);
+		userInfoMain.add(street1Text);
+		userInfoMain.add(street2Label);
+		userInfoMain.add(street2Text);
+		userInfoMain.add(cityLabel);
+		userInfoMain.add(cityText);
+		userInfoMain.add(stateLabel);
+		userInfoMain.add(stateText);
+
+		JPanel b = new JPanel(new GridLayout(1,3));
+		b.add(new JPanel());
+		returnButton = new JButton("Done");
+		returnButton.setActionCommand("info ok");
+		returnButton.addActionListener(this);
+		b.add(returnButton);
+		b.add(new JPanel());
+		
+		empInfoPanel.add(userInfoMain);
+		empInfoPanel.add(b);
+		
+		contentPanel.add(empInfoPanel,"Emp Info Panel");
 	}
 	
 	private void createAddMoviesTab()
@@ -644,6 +788,28 @@ public class GUI extends JFrame implements ActionListener
 		lp.add(new JLabel("Date"));
 		lp.add(new JLabel("Time"));
 		
+		JPanel cp = new JPanel(new GridLayout(1,4));
+		
+		removeMovieList = new JComboBox<String>();
+		//TODO: populate removeMovieList with all currently playing movies (just title is fine)
+		removeMovieList.setActionCommand("chose remove movie");
+		removeMovieList.setSelectedIndex(-1);
+		removeMovieList.addActionListener(this);
+		
+		removeMovieLocList = new JComboBox<String>();
+		removeMovieLocList.setEnabled(false);
+		removeMovieLocList.setActionCommand("chose remove location");
+		removeMovieLocList.addActionListener(this);
+		
+		removeMovieDateList = new JComboBox<String>();
+		removeMovieDateList.setEnabled(false);
+		removeMovieDateList.setActionCommand("chose remove date");
+		removeMovieDateList.addActionListener(this);
+		
+		removeMovieTimeList = new JComboBox<String>();
+		removeMovieTimeList.setEnabled(false);
+		removeMovieTimeList.setActionCommand("chose remove time");
+		removeMovieTimeList.addActionListener(this);
 		
 		empTabbedPane.add(empRemoveMoviesTab, "Remove Movie");
 	}
@@ -1678,14 +1844,13 @@ public class GUI extends JFrame implements ActionListener
 					int emp = Integer.parseInt(selectedShift.substring(4, selectedShift.indexOf(", t")));
 					int th = Integer.parseInt(selectedShift.substring(3+selectedShift.indexOf("r: "), selectedShift.indexOf(", d")));
 					String da = selectedShift.substring(3+selectedShift.indexOf("e: "), selectedShift.indexOf(", j"));
-					DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+					DateFormat format = new SimpleDateFormat("mm/dd/yyyy");
 					Date dat = new Date();
 					try {
 						dat = format.parse(da);
 					} catch (ParseException e1) {
 						// TODO Auto-generated catch block
-						JOptionPane.showMessageDialog(frame,"SQL Error with DATE. Closing App.","SQL Error",JOptionPane.ERROR_MESSAGE);
-						System.exit(1);
+						e1.printStackTrace();
 					}
 					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
 					EmployeeList.delSched(emp, dat, th, jt);
