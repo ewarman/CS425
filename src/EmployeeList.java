@@ -89,12 +89,13 @@ public class EmployeeList {
 	}
 	public static boolean checkDate(int emp_id, Date job_d) {
 		boolean sameDate = false;
+		java.sql.Date sqlDate = new java.sql.Date(job_d.getTime());
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+job_d+"'");
+			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+sqlDate+"'");
 			ResultSet rs = st.getResultSet();
 			if(rs.next()){
 				sameDate = true;
