@@ -11,6 +11,7 @@ public class EmployeeList {
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
 	
+	
 	ArrayList<EmpSchedule> empscheds;
 	ArrayList<EmployeeTrain> emptrain;
 	int emp_id, hire_id;
@@ -107,6 +108,26 @@ public class EmployeeList {
 		return sameDate;
 	}
 	
+	public static ArrayList<EmpShift> getShifts(int emp_id) {
+		ArrayList<EmpShift> shifts = new ArrayList<EmpShift>();
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT * FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"';");
+			ResultSet rs = st.getResultSet();
+			while (rs.next()) {
+				EmpShift shift = new EmpShift(rs.getInt(1), rs.getDate(2), rs.getInt(3), rs.getString(4));
+				shifts.add(shift);
+			}
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		return shifts;
+	}
+	
 	class EmpSchedule
 	{
 		int emp, theater;
@@ -126,3 +147,20 @@ public class EmployeeList {
 	}
 }
 
+class EmpShift
+{
+	int emp, theater;
+	Date j_date;
+	String j_type;
+	
+	public EmpShift() {
+	}
+	
+	public EmpShift(int eid, Date d, int tid, String t)
+	{
+		emp = eid;
+		theater = tid;
+		j_date = d;
+		j_type = t;
+	}
+}
