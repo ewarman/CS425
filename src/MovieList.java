@@ -65,7 +65,7 @@ public class MovieList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("INSERT INTO EWARMAN.MOVIES VALUES ('"+emp_id+"', '"+title+"', '"+dir+"', '"+des+"')");
+			st.executeUpdate("INSERT INTO EWARMAN.MOVIES VALUES ('"+mid+"', '"+title+"', '"+dir+"', '"+des+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
