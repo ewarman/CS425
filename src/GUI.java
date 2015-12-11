@@ -33,6 +33,9 @@ import java.util.Properties;
 
 public class GUI extends JFrame implements ActionListener
 {
+	public boolean Man1movPerm;
+	public boolean Man2movPerm;
+	
 	User user = new User();
 	Guest guest = new Guest();
 	Admin admin = new Admin();
@@ -1871,13 +1874,13 @@ public class GUI extends JFrame implements ActionListener
 		{
 			if(e.getActionCommand() == "add movie")
 			{
-				System.out.println("add movie button was pressed");
+				//System.out.println("add movie button was pressed");
 				String tit_mov = movieNameField.getText();
 				int thid = Integer.parseInt((String) addMovieLocList.getSelectedItem());
 				int s_id = showing.shNum + 1;
 				Date sd = (Date) datePicker2.getModel().getValue();
 				int m_id = movl.findMovie(tit_mov);
-				System.out.println(""+m_id);
+				//System.out.println(""+m_id);
 				showing.addShowing(s_id, m_id, thid, sd);
 				
 			}
