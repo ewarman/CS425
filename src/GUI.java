@@ -1648,7 +1648,15 @@ public class GUI extends JFrame implements ActionListener
 				//TODO: Need to fill removeShiftList JComboBox with shifts scheduled for given employee
 				int empID = Integer.parseInt((String) removeEmpList.getSelectedItem());
 				ArrayList<EmpShift> empshifts = EmployeeList.getShifts(empID);
-				
+				int n;
+				for(n=0; n<empshifts.size(); n++){
+					int empid = empshifts.get(n).emp;
+					int thid = empshifts.get(n).theater;
+					Date d = empshifts.get(n).j_date;
+					String t = empshifts.get(n).j_type;
+					String shift = "id: "+empid+" theater: "+thid+" date: "+d+" job: "+t;
+					removeShiftList.addItem(shift);
+				}
 				
 				removeShiftList.setEnabled(true);
 				removeShiftList.setSelectedIndex(-1);
