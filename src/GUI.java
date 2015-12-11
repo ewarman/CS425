@@ -1,4 +1,3 @@
-package src;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -62,8 +61,12 @@ public class GUI extends JFrame implements ActionListener
 	JPanel forumCreatePanel = new JPanel();
 	JPanel guestInfoPanel = new JPanel();
 	JPanel registerPanel = new JPanel();
+	JPanel empScheduleTab = new JPanel();
+	JPanel empSeeInfoTab = new JPanel();
+	JPanel empEditMoviesTab = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
 	JTabbedPane guestTabbedPane = new JTabbedPane();
+	JTabbedPane empTabbedPane = new JTabbedPane();
 	
 	//Text
 	JTextField ccvText;
@@ -105,12 +108,16 @@ public class GUI extends JFrame implements ActionListener
 	JButton guestPurchaseButton;
 	JButton guestCancelButton;
 	JButton registerUserButton;
+	JButton addShiftButton;
+	JButton removeShiftButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
 	JRadioButton createStarThreadButton;
 	JRadioButton selectMovieRadioButton;
 	JRadioButton selectTheaterRadioButton;
+	JRadioButton viewByEmpRadioButton;
+	JRadioButton viewByTheaterRadioButton;
 	
 	//Combo Boxes
 	JComboBox<String> threadList;
@@ -119,6 +126,10 @@ public class GUI extends JFrame implements ActionListener
 	JComboBox<String> movieList;
 	JComboBox<String> dateList;
 	JComboBox<String> ticketNumList;
+	JComboBox<String> empShiftList;
+	JComboBox<String> theaterShiftList;
+	JComboBox<String> dateShiftList;
+	JComboBox<String> typeShiftList;
 	
 	//Constructor
 	GUI()
@@ -349,6 +360,26 @@ public class GUI extends JFrame implements ActionListener
 		registerPanel.add(userInfoButton);
 	}
 	
+	//creates tabbed pane for emp login
+	private void createEmpTabs()
+	{
+		empTabbedPane = new JTabbedPane();
+		contentPanel.add(empTabbedPane,"Emp Tabs");
+		
+		empScheduleTab = new JPanel(new GridLayout(4,1));
+		createEmpScheduleTab();
+		
+		empSeeInfoTab = new JPanel();
+		createEmpSeeInfoTab();
+		if(!isEmpAdmin()) empSeeInfoTab.setEnabled(false);
+		
+		empEditMoviesTab = new JPanel();
+		createEmpEditMoviesTab();
+		if(!isEmpAdmin()) empEditMoviesTab.setEnabled(false);
+		
+		empTabbedPane.setVisible(false);
+	}
+	
 	//creates tabbed pane for guest login
 	private void createGuestTabs()
 	{
@@ -383,6 +414,95 @@ public class GUI extends JFrame implements ActionListener
 		userTabbedPane.setVisible(false);
 	}
 	
+	private void createEmpScheduleTab()
+	{
+		viewByEmpRadioButton = new JRadioButton("View by Employee");
+		viewByEmpRadioButton.setActionCommand("view by emp");
+		viewByEmpRadioButton.addActionListener(this);
+		
+		viewByTheaterRadioButton = new JRadioButton("View by Theater");
+		viewByTheaterRadioButton.setActionCommand("shift view by theater");
+		viewByTheaterRadioButton.addActionListener(this);
+		
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(viewByEmpRadioButton);
+		bg.add(viewByTheaterRadioButton);
+		JPanel rp = new JPanel(new GridLayout(1,2));
+		rp.add(viewByEmpRadioButton);
+		rp.add(viewByTheaterRadioButton);
+		
+		JLabel empLabel = new JLabel("Employees");
+		JLabel theaterLabel = new JLabel("Theaters");
+		JLabel dateLabel = new JLabel("Date");
+		JLabel typeLabel = new JLabel("Job");
+		JPanel lp = new JPanel(new GridLayout(1,4));
+		lp.add(empLabel);
+		lp.add(theaterLabel);
+		lp.add(dateLabel);
+		lp.add(typeLabel);
+		
+		empShiftList = new JComboBox<String>();
+		empShiftList.setActionCommand("chose shift emp");
+		empShiftList.addActionListener(this);
+		
+		theaterShiftList = new JComboBox<String>();
+		theaterShiftList.setActionCommand("chose shift theater");
+		theaterShiftList.addActionListener(this);
+		
+		dateShiftList = new JComboBox<String>();
+		dateShiftList.setActionCommand("chose shift date");
+		dateShiftList.addActionListener(this);
+		
+		typeShiftList = new JComboBox<String>();
+		typeShiftList.setActionCommand("chose shift type");
+		typeShiftList.addActionListener(this);
+		
+		//TESTING ONLY
+		empShiftList.addItem(test1);
+		empShiftList.addItem(test2);
+		theaterShiftList.addItem(test2);
+		theaterShiftList.addItem(test3);
+		dateShiftList.addItem(test3);
+		dateShiftList.addItem(test1);
+		typeShiftList.addItem(comment1);
+		typeShiftList.addItem(comment2);
+		
+		JPanel cp = new JPanel(new GridLayout(1,4));
+		cp.add(empShiftList);
+		cp.add(theaterShiftList);
+		cp.add(dateShiftList);
+		cp.add(typeShiftList);
+		
+		addShiftButton = new JButton("Add New Shift");
+		removeShiftButton = new JButton("Remove Shift");
+		JPanel bp = new JPanel(new GridLayout(1,2));
+		bp.add(addShiftButton);
+		bp.add(removeShiftButton);
+		
+		empScheduleTab.add(rp);
+		empScheduleTab.add(lp);
+		empScheduleTab.add(cp);
+		empScheduleTab.add(bp);
+		
+		if(!isEmpAdmin()) 
+		{
+			addShiftButton.setEnabled(false);
+			removeShiftButton.setEnabled(false);
+		}
+		
+		empTabbedPane.add(empScheduleTab, "Schedules");
+	}
+	
+	private void createEmpSeeInfoTab()
+	{
+		
+	}
+	
+	private void createEmpEditMoviesTab()
+	{
+		
+	}
+		
 	//creates guest ticket tab from modified user ticket tab
 	private void createGuestTicketTab()
 	{
@@ -857,7 +977,14 @@ public class GUI extends JFrame implements ActionListener
 		threadSubmitButton.setActionCommand("submit comment");
 	}
 	
-	//handles user actions on GUI
+	//checks if emp is owner/admin
+	//TODO: Need to check if logged in emp is owner/admin
+	private boolean isEmpAdmin()
+	{
+		return !admin.equals(new Admin());
+	}
+	
+	//handles actions on GUI
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -891,6 +1018,13 @@ public class GUI extends JFrame implements ActionListener
 			{
 				createRegisterPanel();
 				layoutManager.show(contentPanel, "Register Panel");
+			}
+			else if(e.getActionCommand() == "emp login")
+			{
+				createEmpTabs();
+				layoutManager.show(contentPanel, "Emp Tabs");
+				empEditMoviesTab.setVisible(false);
+				empSeeInfoTab.setVisible(false);
 			}
 		}
 		else if(userInfoTab.isShowing())
@@ -1298,7 +1432,41 @@ public class GUI extends JFrame implements ActionListener
 					layoutManager.show(contentPanel,"Login Panel");
 				}
 				else JOptionPane.showMessageDialog(frame,"Must fill out all info fields","Register Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if(empScheduleTab.isShowing())
+		{
+			if(e.getActionCommand() == "shift view by emp")
+			{
+				empShiftList.removeAllItems();
+				theaterShiftList.removeAllItems();
+				dateShiftList.removeAllItems();
+				typeShiftList.removeAllItems();
 				
+				empShiftList.setEnabled(true);
+				theaterShiftList.setEnabled(false);
+				dateShiftList.setEnabled(false);
+				typeShiftList.setEnabled(false);
+							
+				//TESTING ONLY
+				empShiftList.addItem(test1);
+				empShiftList.addItem(test2);
+			}
+			else if(e.getActionCommand() == "shift view by theater")
+			{
+				empShiftList.removeAllItems();
+				theaterShiftList.removeAllItems();
+				dateShiftList.removeAllItems();
+				typeShiftList.removeAllItems();
+				
+				empShiftList.setEnabled(false);
+				theaterShiftList.setEnabled(true);
+				dateShiftList.setEnabled(false);
+				typeShiftList.setEnabled(false);
+				
+				//TESTING ONLY
+				theaterShiftList.addItem(test2);
+				theaterShiftList.addItem(test3);
 			}
 		}
 		frame.pack();
