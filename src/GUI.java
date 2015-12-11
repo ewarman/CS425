@@ -74,6 +74,7 @@ public class GUI extends JFrame implements ActionListener
 	JPanel guestInfoPanel = new JPanel();
 	JPanel registerPanel = new JPanel();
 	JPanel empAddShiftTab = new JPanel();
+	JPanel empRemoveShiftTab = new JPanel();
 	JPanel empSeeInfoTab = new JPanel();
 	JPanel empEditMoviesTab = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
@@ -386,7 +387,10 @@ public class GUI extends JFrame implements ActionListener
 		contentPanel.add(empTabbedPane,"Emp Tabs");
 		
 		empAddShiftTab = new JPanel(new GridLayout(3,1));
-		addEmpShiftTab();
+		createAddEmpShiftTab();
+		
+		empRemoveShiftTab = new JPanel();
+		createRemoveShiftTab();
 		
 		empSeeInfoTab = new JPanel();
 		createEmpSeeInfoTab();
@@ -431,76 +435,8 @@ public class GUI extends JFrame implements ActionListener
 		userTabbedPane.setVisible(false);
 	}
 	
-	private void addEmpShiftTab() throws SQLException
+	private void createAddEmpShiftTab() throws SQLException
 	{
-//		viewByEmpRadioButton = new JRadioButton("View by Employee");
-//		viewByEmpRadioButton.setActionCommand("view by emp");
-//		viewByEmpRadioButton.addActionListener(this);
-//		
-//		viewByTheaterRadioButton = new JRadioButton("View by Theater");
-//		viewByTheaterRadioButton.setActionCommand("shift view by theater");
-//		viewByTheaterRadioButton.addActionListener(this);
-//		
-//		ButtonGroup bg = new ButtonGroup();
-//		bg.add(viewByEmpRadioButton);
-//		bg.add(viewByTheaterRadioButton);
-//		JPanel rp = new JPanel(new GridLayout(1,2));
-//		rp.add(viewByEmpRadioButton);
-//		rp.add(viewByTheaterRadioButton);
-//		
-//		JLabel empLabel = new JLabel("Employees");
-//		JLabel theaterLabel = new JLabel("Theaters");
-//		JLabel dateLabel = new JLabel("Date");
-//		JLabel typeLabel = new JLabel("Job");
-//		JPanel lp = new JPanel(new GridLayout(1,4));
-//		lp.add(empLabel);
-//		lp.add(theaterLabel);
-//		lp.add(dateLabel);
-//		lp.add(typeLabel);
-//		
-//		empShiftList = new JComboBox<String>();
-//		empShiftList.setActionCommand("chose shift emp");
-//		empShiftList.addActionListener(this);
-//		
-//		theaterShiftList = new JComboBox<String>();
-//		theaterShiftList.setActionCommand("chose shift theater");
-//		theaterShiftList.addActionListener(this);
-//		
-//		dateShiftList = new JComboBox<String>();
-//		dateShiftList.setActionCommand("chose shift date");
-//		dateShiftList.addActionListener(this);
-//		
-//		typeShiftList = new JComboBox<String>();
-//		typeShiftList.setActionCommand("chose shift type");
-//		typeShiftList.addActionListener(this);
-//		
-//		//TESTING ONLY
-//		empShiftList.addItem(test1);
-//		empShiftList.addItem(test2);
-//		theaterShiftList.addItem(test2);
-//		theaterShiftList.addItem(test3);
-//		dateShiftList.addItem(test3);
-//		dateShiftList.addItem(test1);
-//		typeShiftList.addItem(comment1);
-//		typeShiftList.addItem(comment2);
-//		
-//		JPanel cp = new JPanel(new GridLayout(1,4));
-//		cp.add(empShiftList);
-//		cp.add(theaterShiftList);
-//		cp.add(dateShiftList);
-//		cp.add(typeShiftList);
-//		
-//		addShiftButton = new JButton("Add New Shift");
-//		removeShiftButton = new JButton("Remove Shift");
-//		JPanel bp = new JPanel(new GridLayout(1,2));
-//		bp.add(addShiftButton);
-//		bp.add(removeShiftButton);
-//		
-//		empScheduleTab.add(rp);
-//		empScheduleTab.add(lp);
-//		empScheduleTab.add(cp);
-//		empScheduleTab.add(bp);
-		
 		JPanel lp = new JPanel(new GridLayout(1,5));
 		lp.add(new JLabel("Employee ID"));
 		lp.add(new JLabel("Type"));
@@ -528,9 +464,11 @@ public class GUI extends JFrame implements ActionListener
 		cp.add(typeShiftList);
 		
 		theaterShiftList = new JComboBox<String>();
-		theaterShiftList.setEnabled(false);
 		
 		//TODO: Fill theaterShiftList with all possible theaters
+		//testing only
+		theaterShiftList.addItem(test1);
+		theaterShiftList.addItem(test2);
 		
 		theaterShiftList.setSelectedIndex(-1);
 		theaterShiftList.setActionCommand("chose shift theater");
@@ -566,7 +504,6 @@ public class GUI extends JFrame implements ActionListener
 		addShiftButton = new JButton("Add Shift");
 		addShiftButton.setActionCommand("add shift");
 		addShiftButton.addActionListener(this);
-		addShiftButton.setEnabled(false);
 		bp.add(new JPanel());
 		bp.add(addShiftButton);
 		bp.add(new JPanel());
@@ -576,6 +513,11 @@ public class GUI extends JFrame implements ActionListener
 		empAddShiftTab.add(bp);
 		
 		empTabbedPane.add(empAddShiftTab, "Add Shift");
+	}
+	
+	private void createRemoveShiftTab()
+	{
+		
 	}
 	
 	private void createEmpSeeInfoTab()
@@ -1532,37 +1474,43 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(empAddShiftTab.isShowing())
 		{
-			if(e.getActionCommand() == "shift view by emp")
+			if(e.getActionCommand() == "chose shift emp")
 			{
-				empShiftList.removeAllItems();
-				theaterShiftList.removeAllItems();
-				timeShiftList.removeAllItems();
+				int id = Integer.parseInt((String)empShiftList.getSelectedItem());
+				
 				typeShiftList.removeAllItems();
 				
-				empShiftList.setEnabled(true);
-				theaterShiftList.setEnabled(false);
-				timeShiftList.setEnabled(false);
-				typeShiftList.setEnabled(false);
-							
-				//TESTING ONLY
-				empShiftList.addItem(test1);
-				empShiftList.addItem(test2);
+				for(int i=0;i<admin.emps.size();i++)
+				{
+					if(admin.emps.get(i).id == id)
+					{
+						if(admin.emps.get(i).janitor) typeShiftList.addItem("Janitor");
+						if(admin.emps.get(i).salesrep) typeShiftList.addItem("Sales Rep");
+						if(admin.emps.get(i).ticketmaster) typeShiftList.addItem("Ticketmaster");
+					}
+				}
+				typeShiftList.setSelectedIndex(-1);
+				typeShiftList.setEnabled(true);
 			}
-			else if(e.getActionCommand() == "shift view by theater")
+			else if(e.getActionCommand() == "add shift")
 			{
-				empShiftList.removeAllItems();
-				theaterShiftList.removeAllItems();
-				timeShiftList.removeAllItems();
-				typeShiftList.removeAllItems();
+				Date selectedDate = (Date) datePicker.getModel().getValue();
 				
-				empShiftList.setEnabled(false);
-				theaterShiftList.setEnabled(true);
-				timeShiftList.setEnabled(false);
-				typeShiftList.setEnabled(false);
-				
-				//TESTING ONLY
-				theaterShiftList.addItem(test2);
-				theaterShiftList.addItem(test3);
+				if(empShiftList.getSelectedIndex()==-1 || typeShiftList.getSelectedIndex()==-1 || theaterShiftList.getSelectedIndex()==-1
+						|| timeShiftList.getSelectedIndex()==-1 || selectedDate.before(new Date()))
+				{
+					JOptionPane.showMessageDialog(frame,"Must fill out all info fields and select a date after today","Add Shift Error",JOptionPane.ERROR_MESSAGE);
+				}
+				else
+				{
+					int id = Integer.parseInt((String)empShiftList.getSelectedItem());
+					String job = (String) typeShiftList.getSelectedItem();
+					String time = (String) timeShiftList.getSelectedItem();
+					String theater = (String) theaterShiftList.getSelectedItem();
+					
+					//TODO: Check if employee is being scheduled at the same time as another shift they have
+					//TODO: If yes, throw JOptionPane error box up. If not, add shift to schedule in DB
+				}
 			}
 		}
 		frame.pack();
