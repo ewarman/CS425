@@ -37,6 +37,8 @@ public class GUI extends JFrame implements ActionListener
 	Guest guest = new Guest();
 	Admin admin = new Admin();
 	Location location = new Location();
+	Movies mov = new Movies();
+	ShowingsList showing = new ShowingsList();
 	
 	//Test Variables
 	String username = "test user";
@@ -748,6 +750,9 @@ public class GUI extends JFrame implements ActionListener
 		
 		addMovieLocList = new JComboBox<String>();
 		//TODO: Populate list w/all movie locations
+		for(int i = 0; i< showing.schedule.size(); i++){
+			addMovieLocList.addItem(Integer.toString(showing.schedule.get(i).theater));
+		}
 		addMovieLocList.setSelectedItem(-1);
 		cp.add(addMovieLocList);
 		
@@ -793,6 +798,9 @@ public class GUI extends JFrame implements ActionListener
 		
 		removeMovieList = new JComboBox<String>();
 		//TODO: populate removeMovieList with all currently playing movies (just title is fine)
+		for (int i = 0; i<showing.schedule.size(); i++){
+			removeMovieList.addItem(showing.schedule.get(i).title);
+		}
 		removeMovieList.setActionCommand("chose remove movie");
 		removeMovieList.setSelectedIndex(-1);
 		removeMovieList.addActionListener(this);

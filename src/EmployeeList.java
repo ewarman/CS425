@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class EmployeeList {
@@ -64,12 +65,13 @@ public class EmployeeList {
 		}
 	}
 	public static void addSched(int emp_id, Date job_d, int th_id, String job_t) {
+		java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("INSERT INTO EWARMAN.EMPSCHEDULE VALUES ('"+emp_id+"', TO_DATE('"+job_d+"', 'mm-dd-yyyy'), '"+th_id+"', '"+job_t+"')");
+			st.executeUpdate("INSERT INTO EWARMAN.EMPSCHEDULE VALUES ('"+emp_id+"', TO_DATE('"+sqlDate+"', 'YYYY-MM-DD'), '"+th_id+"', '"+job_t+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -89,7 +91,7 @@ public class EmployeeList {
 	}
 	public static boolean checkDate(int emp_id, Date job_d) {
 		boolean sameDate = false;
-		java.sql.Date sqlDate = new java.sql.Date(job_d.getTime());
+		java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 

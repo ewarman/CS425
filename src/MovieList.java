@@ -58,6 +58,19 @@ public class MovieList {
 			System.err.println(ex.getMessage()); 
 		}
 	}
+	
+	public static void addMovie(int mid, String title, String dir, String des) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO EWARMAN.MOVIES VALUES ('"+emp_id+"', '"+title+"', '"+dir+"', '"+des+"')");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
 }
 
 class Star {
