@@ -1,4 +1,3 @@
-package src;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -982,8 +981,7 @@ public class GUI extends JFrame implements ActionListener
 	//TODO: Need to check if logged in emp is owner/admin
 	private boolean isEmpAdmin()
 	{
-//		return false;
-		return true;
+		return !admin.equals(new Admin());
 	}
 	
 	//handles actions on GUI
