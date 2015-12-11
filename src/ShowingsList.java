@@ -5,6 +5,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Date;
 
 public class ShowingsList {
 
@@ -93,4 +94,30 @@ public class ShowingsList {
 		}
 		return titles;
 	}
+	
+	public static void addShow(int show_id, int mov_id, int room_id, Date d, double price) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO EWARMAN.SCHEDULE VALUES ('"+show_id+"', '"+mov_id+"', '"+room_id+"', to_date('"+d+"','mm/dd/yyyy'), '"+price+"', 0)");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
+	public static void delShow(int show_id) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("DELETE * FROM EWARMAN.SCHEDULE WHERE SHOWING_ID ='"+show_id+"';");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
+	
 }
