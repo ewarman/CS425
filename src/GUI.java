@@ -36,6 +36,7 @@ public class GUI extends JFrame implements ActionListener
 	User user = new User();
 	Guest guest = new Guest();
 	Admin admin = new Admin();
+	Location location = new Location();
 	
 	//Test Variables
 	String username = "test user";
@@ -498,9 +499,9 @@ public class GUI extends JFrame implements ActionListener
 		
 		//TODO: Fill theaterShiftList with all possible theaters
 		//testing only   
-		int j, size = Location.locations == null ? 0 : Location.locations.size();
+		int j, size = location.locations == null ? 0 : location.locations.size();
 		for(j = 0; j<size;j++){
-			theaterShiftList.addItem(Integer.toString(Location.locations.get(j).th_id));
+			theaterShiftList.addItem(Integer.toString(location.locations.get(j).th_id));
 		}
 		
 		theaterShiftList.setSelectedIndex(-1);
