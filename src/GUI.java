@@ -1520,8 +1520,19 @@ public class GUI extends JFrame implements ActionListener
 					String time = (String) timeShiftList.getSelectedItem();
 					String theater = (String) theaterShiftList.getSelectedItem();
 					
+					int n, thid=0;
+					for(n = 0; n<Location.locations.size();n++){
+						if(theater.equals(Location.locations.get(n).th_name)){
+							thid = Location.locations.get(n).th_id;
+						}
+					}
 					//TODO: Check if employee is being scheduled at the same time as another shift they have
 					//TODO: If yes, throw JOptionPane error box up. If not, add shift to schedule in DB
+					if(EmployeeList.checkDate(id, selectedDate)){
+						JOptionPane.showMessageDialog(frame,"Employee is already scheduled for this time","Add Shift Error",JOptionPane.ERROR_MESSAGE);
+					}else{
+						EmployeeList.addSched(id, selectedDate, thid, job);
+					}
 				}
 			}
 		}

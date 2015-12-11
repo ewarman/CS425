@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MovieList {
 	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
@@ -57,7 +58,6 @@ public class MovieList {
 			System.err.println(ex.getMessage()); 
 		}
 	}
-	
 }
 
 class Star {

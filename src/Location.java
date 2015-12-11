@@ -10,7 +10,7 @@ public class Location {
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
 
-	ArrayList<LocationList> locations;
+	static ArrayList<LocationList> locations;
 	
 	public Location() {
 		locations = new ArrayList<LocationList>();
