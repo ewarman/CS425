@@ -69,7 +69,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("INSERT INTO EWARMAN.EMPSCHEDULE VALUES ('"+emp_id+"', '"+job_d+"', '"+th_id+"', '"+job_t+"')");
+			st.executeUpdate("INSERT INTO EWARMAN.EMPSCHEDULE VALUES ('"+emp_id+"', TO_DATE('"+job_d+"', 'mm-dd-yyyy'), '"+th_id+"', '"+job_t+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -81,20 +81,20 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"' AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
+			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+job_d+"' AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
 	}
 	public static boolean checkDate(int emp_id, Date job_d) {
-		boolean sameDate = true;
+		boolean sameDate = false;
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ='"+emp_id+"' AND JOB_DATE = '"+job_d+"'");
+			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+job_d+"'");
 			ResultSet rs = st.getResultSet();
 			if(rs.next()){
 				sameDate = true;
