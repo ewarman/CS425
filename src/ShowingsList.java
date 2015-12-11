@@ -2,8 +2,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 public class ShowingsList {
@@ -13,6 +16,7 @@ public class ShowingsList {
 	public static final String PSWD = "A20317755";
 	
 	ArrayList<Showing> schedule;
+	public int shNum;
 	
 	public ShowingsList() {
 		schedule = new ArrayList<Showing>();
@@ -23,7 +27,7 @@ public class ShowingsList {
 			Statement st = conn.createStatement();
 			st.executeQuery("SELECT ROOM_ID, MOVIE_ID, SHOW_DATE, TICKET_PRICE, SHOWING_ID FROM AAHMED31.SCHEDULE");
 			ResultSet rs = st.getResultSet();
-
+			shNum = rs.getFetchSize();
 			while (rs.next()) {
 				Showing show = new Showing(rs.getDouble(4),rs.getInt(2), rs.getInt(1), rs.getDate(3), rs.getInt(5));
 				schedule.add(show);
@@ -32,6 +36,9 @@ public class ShowingsList {
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
+		
+		
+		
 	}
 	
 	public void setTitles() {
@@ -53,6 +60,24 @@ public class ShowingsList {
 		}
 		for (Showing show : schedule) {
 			show.title = idTitleMap.get(show.mid);
+		}
+	}
+	
+	public void addShowing(int sid, int mid, int r_id, Date sd) {
+		//java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
+		//java.util.Date d = new java.util.Date();
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String ddf = df.format(sd).toString();
+		//java.sql.Date dbd = java.sql.Date.valueOf(ddf);
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO AAHMED31.SCHEDULE VALUES ("+sid+", "+mid+", "+r_id+", to_date('"+ddf+"', 'MM/dd/yyyy'), 2.00, 0)");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
 		}
 	}
 	

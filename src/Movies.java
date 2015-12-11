@@ -10,6 +10,7 @@ public class Movies {
 	public static final String PSWD = "A20317755";
 
 	ArrayList<MovieList> movies;
+	public static int movNum;
 	
 	public Movies() {
 		movies = new ArrayList<MovieList>();
@@ -20,7 +21,7 @@ public class Movies {
 			Statement st = conn.createStatement();
 			st.executeQuery("SELECT * FROM AAHMED31.MOVIES");
 			ResultSet rs = st.getResultSet();
-
+			movNum = rs.getFetchSize();
 			while (rs.next()) {
 				MovieList movie = new MovieList(rs.getInt(1),rs.getString(2), rs.getString(3), rs.getString(4));
 				movies.add(movie);

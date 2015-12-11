@@ -2,6 +2,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,25 +67,32 @@ public class EmployeeList {
 		}
 	}
 	public static void addSched(int emp_id, Date job_d, int th_id, String job_t) {
-		java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
+		//java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
+		//java.util.Date d = new java.util.Date();
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String ddf = df.format(job_d).toString();
+		//java.sql.Date dbd = java.sql.Date.valueOf(ddf);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("INSERT INTO EWARMAN.EMPSCHEDULE VALUES ('"+emp_id+"', TO_DATE('"+sqlDate+"', 'YYYY-MM-DD'), '"+th_id+"', '"+job_t+"')");
+			st.executeUpdate("INSERT INTO AAHMED31.EMPSCHEDULE VALUES ('"+emp_id+"', to_date('"+ddf+"', 'MM/dd/yyyy'), '"+th_id+"', '"+job_t+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
 	}
 	public static void delSched(int emp_id, Date job_d, int th_id, String job_t) {
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String ddf = df.format(job_d).toString();
+		//java.sql.Date dbd = java.sql.Date.valueOf(ddf);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+job_d+"' AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
+			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = to_date('"+ddf+"', 'MM/dd/yyyy'), AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -91,13 +100,16 @@ public class EmployeeList {
 	}
 	public static boolean checkDate(int emp_id, Date job_d) {
 		boolean sameDate = false;
-		java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
+		//java.sql.Date sqlDate=java.sql.Date.valueOf(""+job_d);
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		String ddf = df.format(job_d).toString();
+		//java.sql.Date dbd = java.sql.Date.valueOf(ddf);
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = '"+sqlDate+"'");
+			st.executeQuery("SELECT EMP_ID FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = to_date('"+ddf+"', 'MM/dd/yyyy')");
 			ResultSet rs = st.getResultSet();
 			if(rs.next()){
 				sameDate = true;
