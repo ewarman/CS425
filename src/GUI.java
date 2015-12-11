@@ -1214,7 +1214,8 @@ public class GUI extends JFrame implements ActionListener
 				String []  parts = threadList.getSelectedItem().toString().split(":");
 				for (MovieThread thread : forum.mf) {
 					if (thread.text.equals(parts[1].trim())) {
-						thread.addComment(thread.id, user.username, createCommentText.getText());
+						int num = MovieThread.movComsize + 1;
+						thread.addComment(thread.id, num, user.username, createCommentText.getText());
 						String msg = user.incrementPoints('c');
 						if (!msg.equals("")) {
 							JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
