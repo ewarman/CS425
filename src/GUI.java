@@ -143,6 +143,8 @@ public class GUI extends JFrame implements ActionListener
 	JComboBox<String> theaterShiftList;
 	JComboBox<String> timeShiftList;
 	JComboBox<String> typeShiftList;
+	JComboBox<String> removeEmpList;
+	JComboBox<String> removeShiftList;
 	
 	//Other
 	Properties p;
@@ -446,7 +448,8 @@ public class GUI extends JFrame implements ActionListener
 		
 		JPanel cp = new JPanel(new GridLayout(1,5));
 			
-		empShiftList = new JComboBox<String>();		
+		empShiftList = new JComboBox<String>();
+		empShiftList.removeAllItems();
 		for(int i=0;i<admin.emps.size();i++)
 		{
 			empShiftList.addItem(Integer.toString(admin.emps.get(i).id));
@@ -517,6 +520,14 @@ public class GUI extends JFrame implements ActionListener
 	
 	private void createRemoveShiftTab()
 	{
+		removeEmpList = new JComboBox<String>();
+		removeEmpList.removeAllItems();
+		for(int i=0;i<admin.emps.size();i++)
+		{
+			removeEmpList.addItem(Integer.toString(admin.emps.get(i).id));
+		}
+		removeEmpList.setSelectedIndex(-1);
+		
 		
 	}
 	

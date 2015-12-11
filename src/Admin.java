@@ -70,12 +70,14 @@ public class Admin {
 			ResultSet rs2 = st2.getResultSet();
 			while(rs2.next())
 			{
-				int id = rs2.getInt(1);
-				boolean j = (rs2.getInt(2) == 1);
-				boolean s = (rs2.getInt(3) == 1);
-				boolean t = (rs2.getInt(4) == 1);
-				
-				emps.add(new EmployeeTrain(id,j,s,t));
+
+					int id = rs2.getInt(1);
+					boolean j = (rs2.getInt(2) == 1);
+					boolean s = (rs2.getInt(3) == 1);
+					boolean t = (rs2.getInt(4) == 1);
+					
+					emps.add(new EmployeeTrain(id,j,s,t));
+
 			}
 			conn.close(); 
 		} catch (Exception ex) { 

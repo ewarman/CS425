@@ -45,6 +45,18 @@ public class TheaterThread {
 			System.err.println(ex.getMessage()); 
 		}
 	}
+	public void addComment(int th_id, int num, String username, String text) {
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeUpdate("INSERT INTO EWARMAN.THEATERCOMMENTS VALUES ('"+th_id+"', '"+num+"', '"+username+"', '"+text+"')");
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+	}
 	
 }
 
