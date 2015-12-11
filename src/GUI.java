@@ -488,9 +488,11 @@ public class GUI extends JFrame implements ActionListener
 		theaterShiftList = new JComboBox<String>();
 		
 		//TODO: Fill theaterShiftList with all possible theaters
-		//testing only
-		theaterShiftList.addItem(test1);
-		theaterShiftList.addItem(test2);
+		//testing only   
+		int j, size = Location.locations == null ? 0 : Location.locations.size();
+		for(j = 0; j<size;j++){
+			theaterShiftList.addItem(Integer.toString(Location.locations.get(j).th_id));
+		}
 		
 		theaterShiftList.setSelectedIndex(-1);
 		theaterShiftList.setActionCommand("chose shift theater");
@@ -1676,8 +1678,15 @@ public class GUI extends JFrame implements ActionListener
 					int emp = Integer.parseInt(selectedShift.substring(4, selectedShift.indexOf(", t")));
 					int th = Integer.parseInt(selectedShift.substring(3+selectedShift.indexOf("r: "), selectedShift.indexOf(", d")));
 					String da = selectedShift.substring(3+selectedShift.indexOf("e: "), selectedShift.indexOf(", j"));
-					DateFormat format = new SimpleDateFormat("mm/dd/yyyy");
-					Date dat = format.parse(da);
+					DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+					Date dat = new Date();
+					try {
+						dat = format.parse(da);
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(frame,"SQL Error with DATE. Closing App.","SQL Error",JOptionPane.ERROR_MESSAGE);
+						System.exit(1);
+					}
 					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
 					EmployeeList.delSched(emp, dat, th, jt);
 				}

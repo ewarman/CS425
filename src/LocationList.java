@@ -14,7 +14,7 @@ public class LocationList {
 	String th_address, th_city, th_state, th_zip, th_name;
 	int th_id;
 	
-	public LocationList() {
+	/*public LocationList() {
 		th_id = 0;
 		th_address = "";
 		th_city = "";
@@ -22,7 +22,7 @@ public class LocationList {
 		th_zip = "";
 		th_name = "";
 		rooms = new ArrayList<Room>();
-	}
+	}*/
 	
 	public LocationList(int tid, String addr, String c, String s, String z, String n) {
 		th_id = tid;
@@ -37,7 +37,7 @@ public class LocationList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT ROOM_ID, ROOM_NUM, CAPACITY FROM AAHMED31.THEATERINFO WHERE THEATER_ID="+tid);
+			st.executeQuery("SELECT ROOM_ID, ROOM_NUM, CAPACITY FROM AAHMED31.THEATERINFO WHERE THEATER_ID = "+tid);
 			ResultSet rs = st.getResultSet();
 
 			while (rs.next()) {
