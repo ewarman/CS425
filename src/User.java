@@ -1,3 +1,4 @@
+package src;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -158,7 +159,6 @@ public class User {
 			st1.executeUpdate("Delete from AAHMED31.THEATERUSERS Where Name = '"+name+"'");
 			st2.executeUpdate("Delete from AAHMED31.CC Where CC_Name = '"+name+"'");
 			st3.executeUpdate("INSERT INTO AAHMED31.CC " + "VALUES ('"+c+"', '"+cvv+"', '"+name+"', 'Visa', date '"+d+"', '"+s1+"', '"+s2+"', '"+city+"', '"+st+"', '"+zip+"')");
-			System.out.println("CC info added");
 			st4.executeUpdate("INSERT INTO AAHMED31.THEATERUSERS " + "VALUES ('"+username+"', '"+password+"', '"+name+"', '"+c+"', '"+phone+"', '"+email+"')");
 			
 			//Update user object values
@@ -191,6 +191,7 @@ public class User {
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st1 = conn.createStatement();
 			st1.executeUpdate("INSERT INTO AAHMED31.TICKETS " + "VALUES ('"+cc+"', '"+sid+"', '"+nt+"', date '"+dbd+"')");
+			System.out.println("Inserted Ticket");
 			conn.close();
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
@@ -226,17 +227,15 @@ public class User {
 		if (c=='c') {
 			bonus = pointsMap.get(rewardLevel)[0];
 		}
+		System.out.println("Points before update: "+totPoints);
 		totPoints += bonus;
 		curPoints += bonus;
+		System.out.println("Points after update: "+totPoints);
 		
 		String oldLevel = rewardLevel;
 		
 		updatePoints();
 		getPointsInfo();
-		
-		System.out.println(totPoints);
-		System.out.println(curPoints);
-		System.out.println(rewardLevel);
 		if (!rewardLevel.equals(oldLevel)) {
 			return "Your reward level increased from "+oldLevel+" to "+rewardLevel;
 		}
@@ -249,7 +248,7 @@ public class User {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			System.out.println("UPDATE AAHMED31.POINTS SET CURRENT_POINTS="+curPoints+", TOTAL_POINTS="+totPoints+" WHERE USERNAME ='"+username+"')");
+			//System.out.println("UPDATE AAHMED31.POINTS SET CURRENT_POINTS="+curPoints+", TOTAL_POINTS="+totPoints+" WHERE USERNAME ='"+username+"')");
 			st.executeQuery("UPDATE AAHMED31.POINTS SET CURRENT_POINTS='"+curPoints+"', TOTAL_POINTS='"+totPoints+"' WHERE USERNAME ='"+username+"'");
 			conn.close(); 
 		} catch (Exception ex) { 

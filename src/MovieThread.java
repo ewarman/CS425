@@ -1,3 +1,4 @@
+package src;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -47,6 +48,7 @@ public class MovieThread {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
+			System.out.println("Insert");
 			st.executeUpdate("INSERT INTO EWARMAN.MOVIECOMMENTS VALUES ('"+th_id+"', '"+num+"', '"+username+"', '"+text+"')");
 			conn.close(); 
 		} catch (Exception ex) { 
