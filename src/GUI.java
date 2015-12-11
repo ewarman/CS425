@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Properties;
 
 public class GUI extends JFrame implements ActionListener
@@ -1654,7 +1656,7 @@ public class GUI extends JFrame implements ActionListener
 					int thid = empshifts.get(n).theater;
 					Date d = empshifts.get(n).j_date;
 					String t = empshifts.get(n).j_type;
-					String shift = "id: "+empid+" theater: "+thid+" date: "+d+" job: "+t;
+					String shift = "id: "+empid+", theater: "+thid+", date: "+d+", job: "+t;
 					removeShiftList.addItem(shift);
 				}
 				
@@ -1671,7 +1673,13 @@ public class GUI extends JFrame implements ActionListener
 				{
 					//TODO: Logic to remove selected shift from DB
 					String selectedShift = (String) removeShiftList.getSelectedItem();
-					
+					int emp = Integer.parseInt(selectedShift.substring(4, selectedShift.indexOf(", t")));
+					int th = Integer.parseInt(selectedShift.substring(3+selectedShift.indexOf("r: "), selectedShift.indexOf(", d")));
+					String da = selectedShift.substring(3+selectedShift.indexOf("e: "), selectedShift.indexOf(", j"));
+					DateFormat format = new SimpleDateFormat("mm/dd/yyyy");
+					Date dat = format.parse(da);
+					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
+					EmployeeList.delSched(emp, dat, th, jt);
 				}
 			}
 		}
