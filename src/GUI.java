@@ -38,7 +38,7 @@ public class GUI extends JFrame implements ActionListener
 	Guest guest = new Guest();
 	Admin admin = new Admin();
 	Location location = new Location();
-	Movies mov = new Movies();
+	MovieList movl = new MovieList();
 	ShowingsList showing = new ShowingsList();
 	
 	//Test Variables
@@ -751,9 +751,12 @@ public class GUI extends JFrame implements ActionListener
 		
 		addMovieLocList = new JComboBox<String>();
 		//TODO: Populate list w/all movie locations
-		for(int i = 0; i< showing.schedule.size(); i++){
-			addMovieLocList.addItem(Integer.toString(showing.schedule.get(i).theater));
+		int j, size = location.locations == null ? 0 : location.locations.size();
+		for(j = 0; j<size;j++){
+			addMovieLocList.addItem(Integer.toString(location.locations.get(j).th_id));
 		}
+//		addMovieLocList.addItem("1");
+//		addMovieLocList.addItem("2");
 		addMovieLocList.setSelectedItem(-1);
 		cp.add(addMovieLocList);
 		
@@ -1803,12 +1806,7 @@ public class GUI extends JFrame implements ActionListener
 					String time = (String) timeShiftList.getSelectedItem();
 					String theater = (String) theaterShiftList.getSelectedItem();
 					
-					int n, thid=0;
-					for(n = 0; n<Location.locations.size();n++){
-						if(theater.equals(Location.locations.get(n).th_name)){
-							thid = Location.locations.get(n).th_id;
-						}
-					}
+					int thid = Integer.parseInt((String) theaterShiftList.getSelectedItem());
 					//TODO: Check if employee is being scheduled at the same time as another shift they have
 					//TODO: If yes, throw JOptionPane error box up. If not, add shift to schedule in DB
 					if(EmployeeList.checkDate(id, selectedDate)){
@@ -1866,6 +1864,20 @@ public class GUI extends JFrame implements ActionListener
 					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
 					EmployeeList.delSched(emp, dat, th, jt);
 				}
+			}
+		}
+		else if(empAddMoviesTab.isShowing())
+		{
+			if(e.getActionCommand() == "Add Movie")
+			{
+				String tit_mov = movieNameField.getText();
+				int thid = Integer.parseInt((String) addMovieLocList.getSelectedItem());
+				int s_id = showing.shNum + 2;
+				Date sd = (Date) datePicker2.getModel().getValue();
+				int m_id = movl.findMovie(tit_mov);
+				System.out.println(""+m_id);
+				showing.addShowing(s_id, m_id, thid, sd);
+				
 			}
 		}
 		frame.pack();

@@ -11,10 +11,11 @@ public class MovieList {
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
 	
+	
 	ArrayList<Star> stars;
 	ArrayList<Genre> genres;
 	String title, director, description;
-	int mid;
+	public static int mid;
 	
 	public MovieList() {
 		mid = 0;
@@ -71,6 +72,23 @@ public class MovieList {
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
 		}
+	}
+	
+	public int findMovie(String title) {
+		int mid = 0;
+		try {// Load Oracle JDBC Driver 
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			 // Connect to Oracle Database 
+			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
+			Statement st = conn.createStatement();
+			st.executeQuery("SELECT MOVIE_ID FROM AAHMED31.GENRE WHERE TITLE ="+title);
+			ResultSet rs = st.getResultSet();
+			mid = rs.getInt(1);
+			conn.close(); 
+		} catch (Exception ex) { 
+			System.err.println(ex.getMessage()); 
+		}
+		return mid;
 	}
 }
 
