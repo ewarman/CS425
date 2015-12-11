@@ -9,9 +9,14 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class GUI extends JFrame implements ActionListener
 {
 	User user = new User();
+	Guest guest = new Guest();
+	Admin admin = new Admin();
 	
 	//Test Variables
 	String username = "test user";
@@ -29,6 +34,9 @@ public class GUI extends JFrame implements ActionListener
 	String thread2 = "thread2";
 	String comment1 = "comment1";
 	String comment2 = "comment2";
+	
+	Showing selected;
+	
 	Vector<Vector<String>> movieThreads = new Vector<Vector<String>>();
 	Vector<Vector<String>> starThreads = new Vector<Vector<String>>();
 	Vector<String> Movies = new Vector<String>();
@@ -53,8 +61,12 @@ public class GUI extends JFrame implements ActionListener
 	JPanel forumCreatePanel = new JPanel();
 	JPanel guestInfoPanel = new JPanel();
 	JPanel registerPanel = new JPanel();
+	JPanel empScheduleTab = new JPanel();
+	JPanel empSeeInfoTab = new JPanel();
+	JPanel empEditMoviesTab = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
 	JTabbedPane guestTabbedPane = new JTabbedPane();
+	JTabbedPane empTabbedPane = new JTabbedPane();
 	
 	//Text
 	JTextField ccvText;
@@ -96,12 +108,16 @@ public class GUI extends JFrame implements ActionListener
 	JButton guestPurchaseButton;
 	JButton guestCancelButton;
 	JButton registerUserButton;
+	JButton addShiftButton;
+	JButton removeShiftButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
 	JRadioButton createStarThreadButton;
 	JRadioButton selectMovieRadioButton;
 	JRadioButton selectTheaterRadioButton;
+	JRadioButton viewByEmpRadioButton;
+	JRadioButton viewByTheaterRadioButton;
 	
 	//Combo Boxes
 	JComboBox<String> threadList;
@@ -110,6 +126,10 @@ public class GUI extends JFrame implements ActionListener
 	JComboBox<String> movieList;
 	JComboBox<String> dateList;
 	JComboBox<String> ticketNumList;
+	JComboBox<String> empShiftList;
+	JComboBox<String> theaterShiftList;
+	JComboBox<String> dateShiftList;
+	JComboBox<String> typeShiftList;
 	
 	//Constructor
 	GUI()
@@ -340,6 +360,26 @@ public class GUI extends JFrame implements ActionListener
 		registerPanel.add(userInfoButton);
 	}
 	
+	//creates tabbed pane for emp login
+	private void createEmpTabs()
+	{
+		empTabbedPane = new JTabbedPane();
+		contentPanel.add(empTabbedPane,"Emp Tabs");
+		
+		empScheduleTab = new JPanel(new GridLayout(4,1));
+		createEmpScheduleTab();
+		
+		empSeeInfoTab = new JPanel();
+		createEmpSeeInfoTab();
+		if(!isEmpAdmin()) empSeeInfoTab.setEnabled(false);
+		
+		empEditMoviesTab = new JPanel();
+		createEmpEditMoviesTab();
+		if(!isEmpAdmin()) empEditMoviesTab.setEnabled(false);
+		
+		empTabbedPane.setVisible(false);
+	}
+	
 	//creates tabbed pane for guest login
 	private void createGuestTabs()
 	{
@@ -374,6 +414,95 @@ public class GUI extends JFrame implements ActionListener
 		userTabbedPane.setVisible(false);
 	}
 	
+	private void createEmpScheduleTab()
+	{
+		viewByEmpRadioButton = new JRadioButton("View by Employee");
+		viewByEmpRadioButton.setActionCommand("view by emp");
+		viewByEmpRadioButton.addActionListener(this);
+		
+		viewByTheaterRadioButton = new JRadioButton("View by Theater");
+		viewByTheaterRadioButton.setActionCommand("shift view by theater");
+		viewByTheaterRadioButton.addActionListener(this);
+		
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(viewByEmpRadioButton);
+		bg.add(viewByTheaterRadioButton);
+		JPanel rp = new JPanel(new GridLayout(1,2));
+		rp.add(viewByEmpRadioButton);
+		rp.add(viewByTheaterRadioButton);
+		
+		JLabel empLabel = new JLabel("Employees");
+		JLabel theaterLabel = new JLabel("Theaters");
+		JLabel dateLabel = new JLabel("Date");
+		JLabel typeLabel = new JLabel("Job");
+		JPanel lp = new JPanel(new GridLayout(1,4));
+		lp.add(empLabel);
+		lp.add(theaterLabel);
+		lp.add(dateLabel);
+		lp.add(typeLabel);
+		
+		empShiftList = new JComboBox<String>();
+		empShiftList.setActionCommand("chose shift emp");
+		empShiftList.addActionListener(this);
+		
+		theaterShiftList = new JComboBox<String>();
+		theaterShiftList.setActionCommand("chose shift theater");
+		theaterShiftList.addActionListener(this);
+		
+		dateShiftList = new JComboBox<String>();
+		dateShiftList.setActionCommand("chose shift date");
+		dateShiftList.addActionListener(this);
+		
+		typeShiftList = new JComboBox<String>();
+		typeShiftList.setActionCommand("chose shift type");
+		typeShiftList.addActionListener(this);
+		
+		//TESTING ONLY
+		empShiftList.addItem(test1);
+		empShiftList.addItem(test2);
+		theaterShiftList.addItem(test2);
+		theaterShiftList.addItem(test3);
+		dateShiftList.addItem(test3);
+		dateShiftList.addItem(test1);
+		typeShiftList.addItem(comment1);
+		typeShiftList.addItem(comment2);
+		
+		JPanel cp = new JPanel(new GridLayout(1,4));
+		cp.add(empShiftList);
+		cp.add(theaterShiftList);
+		cp.add(dateShiftList);
+		cp.add(typeShiftList);
+		
+		addShiftButton = new JButton("Add New Shift");
+		removeShiftButton = new JButton("Remove Shift");
+		JPanel bp = new JPanel(new GridLayout(1,2));
+		bp.add(addShiftButton);
+		bp.add(removeShiftButton);
+		
+		empScheduleTab.add(rp);
+		empScheduleTab.add(lp);
+		empScheduleTab.add(cp);
+		empScheduleTab.add(bp);
+		
+		if(!isEmpAdmin()) 
+		{
+			addShiftButton.setEnabled(false);
+			removeShiftButton.setEnabled(false);
+		}
+		
+		empTabbedPane.add(empScheduleTab, "Schedules");
+	}
+	
+	private void createEmpSeeInfoTab()
+	{
+		
+	}
+	
+	private void createEmpEditMoviesTab()
+	{
+		
+	}
+		
 	//creates guest ticket tab from modified user ticket tab
 	private void createGuestTicketTab()
 	{
@@ -678,31 +807,31 @@ public class GUI extends JFrame implements ActionListener
 		statusText.setEnabled(false);
 		
 		JLabel ccnLabel = new JLabel("CCN: ");
-		ccnText = new JTextField(user.ccn);
+		ccnText = new JTextField(user.ccn.ccn);
 		
-		JLabel ccvLabel = new JLabel("CCV: ");
-		ccvText = new JTextField("Need DAO w/this field");
+		JLabel ccvLabel = new JLabel("CVV: ");
+		ccvText = new JTextField(user.ccn.cvv);
 		
 		JLabel ccNameLabel = new JLabel("Name on CC: ");
-		ccNameText = new JTextField("Need DAO w/this field");
+		ccNameText = new JTextField(user.ccn.name);
 		
 		JLabel ccExpLabel = new JLabel("CC Exp Date: ");
-		ccExpText = new JTextField("Need DAO w/this field");
+		ccExpText = new JTextField(user.ccn.expDate.toString());
 		
 		JLabel street1Label = new JLabel("Street 1: ");
-		street1Text = new JTextField("Need DAO w/this field");
+		street1Text = new JTextField(user.ccn.street1);
 		
 		JLabel street2Label = new JLabel("Street 2: ");
-		street2Text = new JTextField("Need DAO w/this field");
+		street2Text = new JTextField(user.ccn.street2);
 		
 		JLabel cityLabel = new JLabel("City: ");
-		cityText = new JTextField("Need DAO w/this field");
+		cityText = new JTextField(user.ccn.city);
 		
 		JLabel stateLabel = new JLabel("State: ");
-		stateText = new JTextField("Need DAO w/this field");
+		stateText = new JTextField(user.ccn.state);
 		
 		JLabel zipLabel = new JLabel("Zip Code: ");
-		zipText = new JTextField("Need DAO w/this field");
+		zipText = new JTextField(user.ccn.zip);
 		
 		userInfoMain.add(usernameLabel);
 		userInfoMain.add(usernameText);
@@ -848,7 +977,15 @@ public class GUI extends JFrame implements ActionListener
 		threadSubmitButton.setActionCommand("submit comment");
 	}
 	
-	//handles user actions on GUI
+	//checks if emp is owner/admin
+	//TODO: Need to check if logged in emp is owner/admin
+	private boolean isEmpAdmin()
+	{
+//		return false;
+		return true;
+	}
+	
+	//handles actions on GUI
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -883,6 +1020,13 @@ public class GUI extends JFrame implements ActionListener
 				createRegisterPanel();
 				layoutManager.show(contentPanel, "Register Panel");
 			}
+			else if(e.getActionCommand() == "emp login")
+			{
+				createEmpTabs();
+				layoutManager.show(contentPanel, "Emp Tabs");
+				empEditMoviesTab.setVisible(false);
+				empSeeInfoTab.setVisible(false);
+			}
 		}
 		else if(userInfoTab.isShowing())
 		{
@@ -892,22 +1036,32 @@ public class GUI extends JFrame implements ActionListener
 				 ccn = ccnText.getText();
 				 phone = phoneText.getText();
 				 email = emailText.getText();
+				 String cvv = ccvText.getText();
+				 String ccName = ccNameText.getText();
+				 String date = ccExpText.getText();
+				 String zip = zipText.getText();
+				 String s1 = street1Text.getText();
+				 String s2 = street2Text.getText();
+				 String city = cityText.getText();
+				 String state = stateText.getText();
 				 
-				 user.update(password, ccn, phone, email);
+				 user.update(password, ccn, phone, email, cvv, ccName, date, s1, s2, city, state, zip);
 				 JOptionPane.showMessageDialog(frame,"Update Success","User Profile",JOptionPane.PLAIN_MESSAGE);
 			}	
 		}
 		else if(userForumTab.isShowing())
 		{
+			MovieForum forum = new MovieForum();
 			threadList.removeActionListener(this);
 			commentList.removeActionListener(this);
 			if(e.getActionCommand() == "movie threads")
 			{
 				threadList.removeAllItems();
 				threadList.setEnabled(true);
-				for(int i=0; i<movieThreads.get(0).size(); i++)
-				{
-					threadList.addItem(movieThreads.get(0).get(i));
+				
+				ArrayList<MovieThread> movies = forum.arrangeByTitle();
+				for(MovieThread thread : movies) {
+					threadList.addItem(thread.movie+": "+thread.text);
 				}
 
 				commentList.removeAllItems();
@@ -919,9 +1073,10 @@ public class GUI extends JFrame implements ActionListener
 			{
 				threadList.removeAllItems();
 				threadList.setEnabled(true);
-				for(int i=0; i<starThreads.get(0).size(); i++)
-				{
-					threadList.addItem(starThreads.get(0).get(i));
+				
+				ArrayList<MovieThread> stars = forum.arrangeByStars();
+				for(MovieThread thread : stars) {
+					threadList.addItem(thread.star+": "+thread.text);
 				}
 
 				commentList.removeAllItems();
@@ -933,28 +1088,29 @@ public class GUI extends JFrame implements ActionListener
 			{
 				commentList.setEnabled(true);
 				commentList.removeAllItems();
+				
 				if(movieRadioButton.isSelected()) 
 				{
-					int i = movieThreads.get(0).indexOf((String) threadList.getSelectedItem());
-					System.out.println(i);
-					
-					for(int j=0;j<movieThreads.get(i+1).size();j++)
-					{
-						commentList.addItem(movieThreads.get(i+1).get(j));
+					ArrayList<MovieThread> movies = forum.arrangeByTitle();
+					for (MovieThread thread: movies) {
+						String [] parts = threadList.getSelectedItem().toString().split(":");
+						if (thread.movie.equals(parts[0])) {
+							for (Comment comment : thread.comments) {
+								commentList.addItem(comment.text);
+							}
+						}
 					}
-					
 				}
 				else if(starRadioButton.isSelected())
 				{
-					{
-						int i = starThreads.get(0).indexOf((String) threadList.getSelectedItem());
-						System.out.println(i);
-
-						for(int j=0;j<starThreads.get(i+1).size();j++)
-						{
-								commentList.addItem(starThreads.get(i+1).get(j));
+					ArrayList<MovieThread> stars = forum.arrangeByStars();
+					for (MovieThread thread: stars) {
+						String [] parts = threadList.getSelectedItem().toString().split(":");
+						if (thread.star.equals(parts[0])) {
+							for (Comment comment : thread.comments) {
+								commentList.addItem(comment.text);
+							}
 						}
-						
 					}
 				}
 				commentList.setSelectedIndex(-1);
@@ -963,8 +1119,6 @@ public class GUI extends JFrame implements ActionListener
 			else if(e.getActionCommand() == "comment selected" && commentList.getSelectedIndex() != -1)
 			{
 				commentText.setText((String)((JComboBox) e.getSource()).getSelectedItem());
-				System.out.println("test");
-				System.out.println(commentList.getSelectedIndex());
 			}
 			else if(e.getActionCommand() == "create thread")
 			{
@@ -985,35 +1139,39 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(forumCreatePanel.isShowing())
 		{
+			MovieForum forum = new MovieForum();
 			if(e.getActionCommand() == "submit thread")
 			{
 				if(createMovieThreadButton.isSelected())
 				{
-					movieThreads.add(new Vector<String>());
-					movieThreads.get(0).add(createThreadText.getText());
-					movieThreads.get(movieThreads.size()-1).add(createCommentText.getText());
+					forum.addMovieThread(user.username, createThreadText.getText(),createCommentText.getText());
+					String msg = user.incrementPoints('t');
+					if (!msg.equals("")) {
+						JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+					}
 				}
 				else
 				{
-					starThreads.add(new Vector<String>());
-					starThreads.get(0).add(createThreadText.getText());
-					starThreads.get(starThreads.size()-1).add(createCommentText.getText());
-
+					forum.addStarThread(user.username, createThreadText.getText(),createCommentText.getText());
+					String msg = user.incrementPoints('t');
+					if (!msg.equals("")) {
+						JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+					}
 				}
 
 				layoutManager.show(contentPanel, "User Tabs");
 			}
 			else if(e.getActionCommand() == "submit comment")
 			{
-				if(createMovieThreadButton.isSelected())
-				{
-					int i = movieThreads.get(0).indexOf(createThreadText.getText());
-					movieThreads.get(i+1).add(createCommentText.getText());
-				}
-				else
-				{
-					int i = starThreads.get(0).indexOf(createThreadText.getText());
-					starThreads.get(i+1).add(createCommentText.getText());
+				String []  parts = threadList.getSelectedItem().toString().split(":");
+				for (MovieThread thread : forum.mf) {
+					if (thread.text.equals(parts[1].trim())) {
+						thread.addComment(thread.id, user.username, createCommentText.getText());
+						String msg = user.incrementPoints('c');
+						if (!msg.equals("")) {
+							JOptionPane.showMessageDialog(frame, msg,"Congrats!",JOptionPane.PLAIN_MESSAGE);
+						}
+					}
 				}
 				layoutManager.show(contentPanel, "User Tabs");
 			}
@@ -1026,6 +1184,12 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(userTicketTab.isShowing())
 		{
+			ShowingsList shows = new ShowingsList();
+			shows.setTitles();
+			shows.setTheaters();
+			HashSet<String> titles = shows.getUniqueTitles();
+			HashSet<Integer> theaters = shows.getUniqueTheaters();
+			
 			theaterList.removeActionListener(this);
 			movieList.removeActionListener(this);
 			dateList.removeActionListener(this);
@@ -1040,11 +1204,9 @@ public class GUI extends JFrame implements ActionListener
 				movieList.setEnabled(true);
 				dateList.setEnabled(false);
 				
-				//TODO: Need to add all possible movies
-				
-				//TESTING ONLY
-				movieList.addItem(test1);
-				movieList.addItem(test2);
+				for (String title : titles) {
+					movieList.addItem(title);
+				}
 				
 				theaterList.setSelectedIndex(-1);
 				movieList.setSelectedIndex(-1);
@@ -1058,11 +1220,9 @@ public class GUI extends JFrame implements ActionListener
 				theaterList.removeAllItems();
 				dateList.removeAllItems();
 				
-				//TODO: Need to add all possible theaters
-				
-				//TESTING ONLY
-				theaterList.addItem(test2);
-				theaterList.addItem(test3);
+				for (int theater : theaters) {
+					theaterList.addItem(Integer.toString(theater));
+				}
 				
 				movieList.setEnabled(false);
 				theaterList.setEnabled(true);
@@ -1080,11 +1240,17 @@ public class GUI extends JFrame implements ActionListener
 				{
 					theaterList.removeAllItems();
 					
-					//TODO: Need to add theaters where chosen movie is playing
+					ArrayList<Showing> copy = new ArrayList<Showing>(shows.schedule);
 					
-					//remove once dao's in place
-					theaterList.addItem(test2);
-					theaterList.addItem(test3);
+					for (Showing s : copy) {
+						if (!s.title.equals(movieList.getSelectedItem())) {
+							shows.schedule.remove(s);
+						}
+					}
+					theaters = shows.getUniqueTheaters();
+					for (int theater : theaters) {
+						theaterList.addItem(Integer.toString(theater));
+					}
 					
 					theaterList.setEnabled(true);
 					dateList.setEnabled(false);
@@ -1096,10 +1262,12 @@ public class GUI extends JFrame implements ActionListener
 				{
 					dateList.removeAllItems();
 					
-					//TODO: Need to add dates when chosen movie is playing at chosen theater
+					for (Showing s : shows.schedule) {
+						if (Integer.toString(s.theater).equals(theaterList.getSelectedItem()) && s.title.equals(movieList.getSelectedItem())) {
+							dateList.addItem(s.date.toString());
+						}
+					}
 					
-					//remove once dao's in place
-					dateList.addItem(test3);
 					
 					dateList.setEnabled(true);	
 					dateList.setSelectedIndex(-1);
@@ -1112,11 +1280,18 @@ public class GUI extends JFrame implements ActionListener
 				{
 					movieList.removeAllItems();
 					
-					//TODO: Need to add movies playing at chosen theater
+					ArrayList<Showing> copy = new ArrayList<Showing>(shows.schedule);
+					for (Showing s : copy) {
+						if (!(Integer.toString(s.theater)).equals(theaterList.getSelectedItem())) {
+							shows.schedule.remove(s);
+						}
+					}
 					
-					//remove once dao's in place
-					movieList.addItem(test1);
-					movieList.addItem(test2);
+					
+					titles = shows.getUniqueTitles();
+					for (String title : titles) {
+						movieList.addItem(title);
+					}
 					
 					movieList.setEnabled(true);
 					dateList.setEnabled(false);
@@ -1127,46 +1302,63 @@ public class GUI extends JFrame implements ActionListener
 				else
 				{
 					dateList.removeAllItems();
+
+					for (Showing s : shows.schedule) {
+						if (s.title.equals(movieList.getSelectedItem()) && Integer.toString(s.theater).equals(theaterList.getSelectedItem())) {
+							dateList.addItem(s.date.toString());
+						}
+					}
 					
-					//TODO: Need to add dates when chosen movie is playing at chosen theater
-					
-					//remove once dao's in place
-					dateList.addItem(test3);
-					
-					dateList.setEnabled(true);
-					dateList.setSelectedIndex(-1);
-				}
+				dateList.setEnabled(true);
+				dateList.setSelectedIndex(-1);
 				ticketPriceText.setText("");
+				}
 			}
+				
 			else if(e.getActionCommand() == "chose date")
 			{
-				//TODO: total price for tickets calculated here
-				double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
+				
+				double price = selected.price * Double.parseDouble((String)ticketNumList.getSelectedItem());
 				ticketPriceText.setText("Total Price: $" +  price);
 			}
 			else if(e.getActionCommand() == "chose num tickets")
 			{
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
+				
 				if(!ticketPriceText.getText().equals(""))
 				{
-					//TODO: total price for tickets calculated here
-					double price = 10.25 * Double.parseDouble((String)ticketNumList.getSelectedItem());
+					double price = selected.price * Double.parseDouble((String)ticketNumList.getSelectedItem());
 					ticketPriceText.setText("Total Price: $" +  price);
 				}
 			}
 			else if(e.getActionCommand() == "buy ticket")
 			{
+				for(Showing s : shows.schedule) {
+					if (s.title.equals(movieList.getSelectedItem()) 
+							&& Integer.toString(s.theater).equals(theaterList.getSelectedItem())
+							&& s.date.toString().equals(dateList.getSelectedItem())) {
+						selected = s;
+					}
+				}
+				
 				if(dateList.getSelectedIndex() != -1)
 				{
 					if(ticketNumList.getSelectedIndex() != -1)
 					{
-						String numTickets = (String) ticketNumList.getSelectedItem();
-						String date = (String) dateList.getSelectedItem();
-						String theater = (String) theaterList.getSelectedItem();
-						String movie = (String) movieList.getSelectedItem();
-						String priceString = ticketPriceText.getText();
-						double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
-						
-						//TODO: Need logic to place ticket order into DB
+						user.purchaseTicket(selected.sid, Integer.parseInt(ticketNumList.getSelectedItem().toString()));
 					}
 					else JOptionPane.showMessageDialog(frame,"You must purchase between 1 and 9 tickets.","Buy Ticket Error",JOptionPane.ERROR_MESSAGE);			
 				}
@@ -1214,14 +1406,11 @@ public class GUI extends JFrame implements ActionListener
 					&& !ccExpText.getText().isEmpty()  && !street1Text.getText().isEmpty() && !street2Text.getText().isEmpty() && !cityText.getText().isEmpty()
 					&& !stateText.getText().isEmpty() && !emailText.getText().isEmpty())
 				{
-					String numTickets = (String) ticketNumList.getSelectedItem();
-					String date = (String) dateList.getSelectedItem();
-					String theater = (String) theaterList.getSelectedItem();
-					String movie = (String) movieList.getSelectedItem();
-					String priceString = ticketPriceText.getText();
-					double total = Double.parseDouble(priceString.substring(priceString.indexOf('$')+1,priceString.length()));
+					guest.registerCC(ccnText.getText(),ccvText.getText(),ccNameText.getText(),java.sql.Date.valueOf(ccExpText.getText()),street1Text.getText(),street2Text.getText(), cityText.getText(), stateText.getText(),zipText.getText());
+					guest.registerUser(ccNameText.getText(),ccnText.getText(),emailText.getText());
 					
-					//TODO: Need logic to place ticket order into DB
+					guest.purchaseTicket(selected.sid, Integer.parseInt(ticketNumList.getSelectedItem().toString()));
+					
 					JOptionPane.showMessageDialog(frame,"Your ticket purchase has been placed","Ticket Purchase Placed",JOptionPane.INFORMATION_MESSAGE);
 					layoutManager.show(contentPanel,"Guest Tabs");
 				}
@@ -1237,12 +1426,48 @@ public class GUI extends JFrame implements ActionListener
 					&& !stateText.getText().isEmpty() && !emailText.getText().isEmpty() && !usernameText.getText().isEmpty() && !passwordText.getText().isEmpty()
 					&& !nameText.getText().isEmpty() && !phoneText.getText().isEmpty())
 				{
-					//TODO: Need logic to register user
+					user.registerCC(ccnText.getText(),ccvText.getText(),ccNameText.getText(),java.sql.Date.valueOf(ccExpText.getText()),street1Text.getText(),street2Text.getText(), cityText.getText(), stateText.getText(),zipText.getText());
+					user.registerUser(usernameText.getText(), passwordText.getText(), ccNameText.getText(),ccnText.getText(),phoneText.getText(),emailText.getText());
+					
 					JOptionPane.showMessageDialog(frame,"Your account has been created.","Account Registration",JOptionPane.INFORMATION_MESSAGE);
 					layoutManager.show(contentPanel,"Login Panel");
 				}
 				else JOptionPane.showMessageDialog(frame,"Must fill out all info fields","Register Error",JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if(empScheduleTab.isShowing())
+		{
+			if(e.getActionCommand() == "shift view by emp")
+			{
+				empShiftList.removeAllItems();
+				theaterShiftList.removeAllItems();
+				dateShiftList.removeAllItems();
+				typeShiftList.removeAllItems();
 				
+				empShiftList.setEnabled(true);
+				theaterShiftList.setEnabled(false);
+				dateShiftList.setEnabled(false);
+				typeShiftList.setEnabled(false);
+							
+				//TESTING ONLY
+				empShiftList.addItem(test1);
+				empShiftList.addItem(test2);
+			}
+			else if(e.getActionCommand() == "shift view by theater")
+			{
+				empShiftList.removeAllItems();
+				theaterShiftList.removeAllItems();
+				dateShiftList.removeAllItems();
+				typeShiftList.removeAllItems();
+				
+				empShiftList.setEnabled(false);
+				theaterShiftList.setEnabled(true);
+				dateShiftList.setEnabled(false);
+				typeShiftList.setEnabled(false);
+				
+				//TESTING ONLY
+				theaterShiftList.addItem(test2);
+				theaterShiftList.addItem(test3);
 			}
 		}
 		frame.pack();
