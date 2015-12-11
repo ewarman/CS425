@@ -778,6 +778,8 @@ public class GUI extends JFrame implements ActionListener
 		JPanel bp = new JPanel(new GridLayout(1,3));
 		bp.add(new JPanel());
 		addMovieButton = new JButton("Add Movie");
+		addMovieButton.setActionCommand("add movie");
+		addMovieButton.addActionListener(this);
 		bp.add(addMovieButton);
 		bp.add(new JPanel());
 		
@@ -1867,11 +1869,12 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(empAddMoviesTab.isShowing())
 		{
-			if(e.getActionCommand() == "Add Movie")
+			if(e.getActionCommand() == "add movie")
 			{
+				System.out.println("add movie button was pressed");
 				String tit_mov = movieNameField.getText();
 				int thid = Integer.parseInt((String) addMovieLocList.getSelectedItem());
-				int s_id = showing.shNum + 2;
+				int s_id = showing.shNum + 1;
 				Date sd = (Date) datePicker2.getModel().getValue();
 				int m_id = movl.findMovie(tit_mov);
 				System.out.println(""+m_id);

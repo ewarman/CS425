@@ -80,9 +80,11 @@ public class MovieList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeQuery("SELECT MOVIE_ID FROM AAHMED31.GENRE WHERE TITLE ="+title);
+			st.executeQuery("SELECT MOVIE_ID FROM AAHMED31.MOVIES WHERE TITLE = '"+title+"'");
 			ResultSet rs = st.getResultSet();
-			mid = rs.getInt(1);
+			if (rs.next()){
+				mid = rs.getInt(1);
+			}else mid = 0;
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 
