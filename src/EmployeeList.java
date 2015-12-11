@@ -90,7 +90,7 @@ public class EmployeeList {
 	
 }
 
-class EmpSchedule {
+class EmpSchedule() {
 	int emp, theater;
 	Date j_date;
 	String j_type;
