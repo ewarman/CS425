@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 public class MovieThread {
-	
+	public static int movComsize;
 	public static final String URL = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl";
 	public static final String USER = "ewarman";
 	public static final String PSWD = "A20317755";
@@ -30,7 +30,7 @@ public class MovieThread {
 			Statement st = conn.createStatement();
 			st.executeQuery("SELECT USERNAME, TEXT FROM EWARMAN.MOVIECOMMENTS WHERE THREAD_ID="+i);
 			ResultSet rs = st.getResultSet();
-
+			movComsize = rs.getFetchSize();
 			while (rs.next()) {
 				Comment comment = new Comment(rs.getString(1), rs.getString(2));
 				comments.add(comment);
