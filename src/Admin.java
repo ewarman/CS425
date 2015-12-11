@@ -1,3 +1,4 @@
+package src;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -86,7 +87,7 @@ public class Admin {
 				user.username = rs.getString(1);
 				user.password = rs.getString(2);
 				user.name = rs.getString(3);
-				user.ccn = rs.getString(4);
+				user.cc = rs.getString(4);
 				user.phone = rs.getString(5);
 				user.email = rs.getString(6);
 			}
