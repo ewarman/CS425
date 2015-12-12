@@ -105,6 +105,9 @@ public class Admin {
 	
 	public User viewUser(String usr) {
 		User user = new User();
+		int totPoints = 0;
+		int curPoints = 0;
+		String rewardLevel = "Beginner";
 		try {// Load Oracle JDBC Driver 
 			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
 			 // Connect to Oracle Database 
@@ -120,6 +123,30 @@ public class Admin {
 				user.cc = rs.getString(4);
 				user.phone = rs.getString(5);
 				user.email = rs.getString(6);
+			}
+			Statement st2 = conn.createStatement();
+			st2.executeQuery("SELECT * FROM AAHMED31.CC WHERE CCN='"+user.cc+"'");
+			ResultSet rs2 = st2.getResultSet();
+			if(rs2.next())
+			{
+				user.ccn=new CreditCard(rs2.getString(1),rs2.getString(2),rs2.getString(3),rs2.getString(4), rs2.getDate(5), rs2.getString(6), rs2.getString(7), rs2.getString(8), rs2.getString(8), rs2.getString(9));
+			}
+			
+			Statement st3 = conn.createStatement();
+			st3.executeQuery("SELECT * FROM AAHMED31.POINTS WHERE USERNAME='"+user.username+"'");
+			ResultSet rs3 = st3.getResultSet();
+			
+			if(rs3.next())
+			{
+				totPoints = rs3.getInt(3);
+				curPoints = rs3.getInt(2);
+				Statement st4 = conn.createStatement();
+				st4.executeQuery("SELECT LEVEL_NAME FROM AAHMED31.POINTLEVEL WHERE LEVEL_BOUNDARY < "+totPoints+ "ORDER BY LEVEL_BOUNDARY DESC");
+				ResultSet rs4 = st4.getResultSet();
+				if (rs4.next()) rewardLevel=rs4.getString(1);
+				user.curPoints=curPoints;
+				user.totPoints=totPoints;
+				user.rewardLevel=rewardLevel;
 			}
 			conn.close(); 
 		} catch (Exception ex) { 

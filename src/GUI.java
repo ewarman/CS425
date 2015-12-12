@@ -4,6 +4,15 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -35,6 +44,8 @@ public class GUI extends JFrame implements ActionListener
 {
 	public boolean Man1movPerm;
 	public boolean Man2movPerm;
+	public int count = 0;
+	public int randomNum = (int)(Math.random() % 2147483640);
 	
 	User user = new User();
 	Guest guest = new Guest();
@@ -92,6 +103,7 @@ public class GUI extends JFrame implements ActionListener
 	JPanel empSeeInfoTab = new JPanel();
 	JPanel empAddMoviesTab = new JPanel();
 	JPanel empRemoveMoviesTab = new JPanel();
+	JPanel empPermissionsTab = new JPanel();
 	JTabbedPane userTabbedPane = new JTabbedPane();
 	JTabbedPane guestTabbedPane = new JTabbedPane();
 	JTabbedPane empTabbedPane = new JTabbedPane();
@@ -144,6 +156,10 @@ public class GUI extends JFrame implements ActionListener
 	JButton removeMovieButton;
 	JButton seeInfoButton;
 	JButton returnButton;
+	JButton addPermissionButton;
+	JButton removePermissionsButton;
+	JRadioButton manager1RadioButton;
+	JRadioButton manager2RadioButton;
 	JRadioButton movieRadioButton;
 	JRadioButton starRadioButton;
 	JRadioButton createMovieThreadButton;
@@ -182,6 +198,7 @@ public class GUI extends JFrame implements ActionListener
 	UtilDateModel model2;
 	JDatePanelImpl datePanel2;
 	JDatePickerImpl datePicker2;
+	File f;
 	
 	
 	//Constructor
@@ -221,6 +238,11 @@ public class GUI extends JFrame implements ActionListener
 		frame.setVisible(true);
 		
 		frame.add(contentPanel);
+		
+		f = new File("C:/Users/Ayesha Ahmed/Documents/CS425/Final Project/sqlhw_final_project_ahmed_warman_caron/temp.txt");
+		//f = File.createTempFile("projPermissions", "txt");
+		f.setWritable(true);
+		f.setReadable(true);
 	}
 	
 	//creates and displays login panel
@@ -414,7 +436,7 @@ public class GUI extends JFrame implements ActionListener
 	}
 	
 	//creates tabbed pane for emp login
-	private void createEmpTabs() throws SQLException
+	private void createEmpTabs() throws SQLException, FileNotFoundException
 	{
 		empTabbedPane = new JTabbedPane();
 		contentPanel.add(empTabbedPane,"Emp Tabs");
@@ -435,7 +457,43 @@ public class GUI extends JFrame implements ActionListener
 		empRemoveMoviesTab = new JPanel(new GridLayout(3,1));
 		createRemoveMoviesTab();
 		
+		empPermissionsTab = new JPanel(new GridLayout(2,1));
+		createPermissionsTab();
+		
 		empTabbedPane.setVisible(false);
+	}
+	
+	private void createPermissionsTab()
+	{
+		JPanel rp = new JPanel(new GridLayout(1,2));
+		
+		manager1RadioButton = new JRadioButton("Manager 1");
+		manager2RadioButton = new JRadioButton("Manager 2");
+		ButtonGroup b = new ButtonGroup();
+		b.add(manager1RadioButton);
+		b.add(manager2RadioButton);
+		rp.add(manager1RadioButton);
+		rp.add(manager2RadioButton);
+		
+		JPanel bp = new JPanel(new GridLayout(1,2));
+		addPermissionButton = new JButton("Add Permission");
+		addPermissionButton.setActionCommand("add permission");
+		addPermissionButton.addActionListener(this);
+		removePermissionsButton = new JButton("Remove All Permissions");
+		removePermissionsButton.setActionCommand("remove permissions");
+		removePermissionsButton.addActionListener(this);
+		bp.add(addPermissionButton);
+		bp.add(removePermissionsButton);
+		
+		empPermissionsTab.add(rp);
+		empPermissionsTab.add(bp);
+		if(!admin.type.equalsIgnoreCase("owner"))
+		{
+			addPermissionButton.setEnabled(false);
+			removePermissionsButton.setEnabled(false);
+		}
+		
+		empTabbedPane.add("Permissions",empPermissionsTab);
 	}
 	
 	//creates tabbed pane for guest login
@@ -502,12 +560,21 @@ public class GUI extends JFrame implements ActionListener
 		
 		theaterShiftList = new JComboBox<String>();
 		
-		//TODO: Fill theaterShiftList with all possible theaters
-		//testing only   
-		int j, size = location.locations == null ? 0 : location.locations.size();
-		for(j = 0; j<size;j++){
-			theaterShiftList.addItem(Integer.toString(location.locations.get(j).th_id));
+//		//TODO: Fill theaterShiftList with all possible theaters
+//		//testing only 
+		
+		if(admin.type.equalsIgnoreCase("owner"))
+		{
+			int j, size = location.locations == null ? 0 : location.locations.size();
+			for(j = 0; j<size;j++){
+				theaterShiftList.addItem(Integer.toString(location.locations.get(j).th_id));
+			}
 		}
+		else if(admin.type.equalsIgnoreCase("web admin"))
+		{
+			theaterShiftList.setEnabled(false);
+		}
+		else theaterShiftList.addItem(new Integer(admin.theater).toString());
 		
 		theaterShiftList.setSelectedIndex(-1);
 		theaterShiftList.setActionCommand("chose shift theater");
@@ -607,6 +674,8 @@ public class GUI extends JFrame implements ActionListener
 			guestInfoList.setSelectedIndex(-1);
 			
 			seeInfoButton = new JButton("View Info");
+			seeInfoButton.setActionCommand("Admin See User");
+			seeInfoButton.addActionListener(this);
 			
 			empSeeInfoTab.add(l);
 			empSeeInfoTab.add(guestInfoList);
@@ -740,7 +809,43 @@ public class GUI extends JFrame implements ActionListener
 		contentPanel.add(empInfoPanel,"Emp Info Panel");
 	}
 	
-	private void createAddMoviesTab()
+	private void createAddMoviesTab() throws FileNotFoundException
+	{
+		boolean man1 = false;
+		boolean man2 =  false;
+		if(f.exists())
+		{
+			f.setWritable(true);
+			f.setReadable(true);
+			char[] c = new char[1000];
+			BufferedReader in = new BufferedReader(new FileReader(f));
+			try {
+				int i = in.read(c);
+				String str = new String(c);
+				System.out.println(str);
+				if(!str.isEmpty())
+				{
+
+					
+						if(str.contains("manager1"))
+						{
+							man1=true;
+						}
+						if(str.contains("manager2"))
+						{
+							man2=true;
+						}
+					
+
+				}
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	if(admin.type.equalsIgnoreCase("owner") || (admin.username.equalsIgnoreCase("manage1tcbt")&&man1) || (man2&&admin.username.equalsIgnoreCase("manage2tcbt")))	
 	{
 		JPanel lp = new JPanel(new GridLayout(1,4));
 		lp.add(new JLabel("Movie"));
@@ -785,6 +890,8 @@ public class GUI extends JFrame implements ActionListener
 		addMovieButton = new JButton("Add Movie");
 		addMovieButton.setActionCommand("add movie");
 		addMovieButton.addActionListener(this);
+		addMovieButton.setEnabled(true);
+		addMovieButton.setVisible(true);
 		bp.add(addMovieButton);
 		bp.add(new JPanel());
 		
@@ -792,8 +899,13 @@ public class GUI extends JFrame implements ActionListener
 		empAddMoviesTab.add(lp);
 		empAddMoviesTab.add(cp);
 		empAddMoviesTab.add(bp);
-		
+	}
+	else
+	{
+		empAddMoviesTab.add(new JLabel("Invalid Permissions"));
+	}
 		empTabbedPane.add(empAddMoviesTab,"Add Movie");
+	
 	}
 	
 	private void createRemoveMoviesTab()
@@ -1351,7 +1463,12 @@ public class GUI extends JFrame implements ActionListener
 				{
 					try 
 					{
-						createEmpTabs();
+						try {
+							createEmpTabs();
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					} 
 					catch (SQLException e1) 
 					{
@@ -1799,7 +1916,7 @@ public class GUI extends JFrame implements ActionListener
 			else if(e.getActionCommand() == "add shift")
 			{
 				Date selectedDate = (Date) datePicker1.getModel().getValue();
-				
+				System.out.println(""+selectedDate);
 				if(empShiftList.getSelectedIndex()==-1 || typeShiftList.getSelectedIndex()==-1 || theaterShiftList.getSelectedIndex()==-1
 						|| timeShiftList.getSelectedIndex()==-1 || selectedDate.before(new Date()))
 				{
@@ -1861,16 +1978,21 @@ public class GUI extends JFrame implements ActionListener
 					System.out.println(""+th+".");
 					String da = selectedShift.substring(3+selectedShift.indexOf("e: "), selectedShift.indexOf(", j"));
 					System.out.println(da);
-					DateFormat format = new SimpleDateFormat("mm-dd-yyyy");
+					String date = da.substring(5,7) +"-"+ da.substring(8,da.length())+"-"+da.substring(0,4);
+					System.out.println(date);
+					
+					DateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 					Date dat = new Date();
 					try {
-						dat = format.parse(da);
+						dat = format.parse(date);
 					} catch (ParseException e1) {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(frame,"SQL Error with DATE. Closing App.","SQL Error",JOptionPane.ERROR_MESSAGE);
 						System.exit(1);
 					}
 					System.out.println(""+dat);
+					
+					
 					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
 					System.out.println(jt+".");
 					EmployeeList.delSched(emp, dat, th, jt);
@@ -1879,17 +2001,65 @@ public class GUI extends JFrame implements ActionListener
 		}
 		else if(empAddMoviesTab.isShowing())
 		{
+			
 			if(e.getActionCommand() == "add movie")
 			{
+				count++;
+				System.out.println(""+count);
+				ShowingsList shows = new ShowingsList();
 				//System.out.println("add movie button was pressed");
 				String tit_mov = movieNameField.getText();
 				int thid = Integer.parseInt((String) addMovieLocList.getSelectedItem());
-				int s_id = showing.shNum + 1;
+				int s_id = shows.shNum + count;
 				Date sd = (Date) datePicker2.getModel().getValue();
 				int m_id = movl.findMovie(tit_mov);
 				//System.out.println(""+m_id);
-				showing.addShowing(s_id, m_id, thid, sd);
+				shows.addShowing(s_id, m_id, thid, sd);
 				
+			}
+		}
+		else if((empSeeInfoTab.isShowing()))
+		{
+			if(e.getActionCommand() == "Admin See User")
+			{
+				createEmpInfoPanel();
+				layoutManager.show(contentPanel, "Emp Info Panel");
+			}
+		}
+		
+		else if((empInfoPanel.isShowing())){
+			if(e.getActionCommand() == "info ok"){
+				layoutManager.show(contentPanel, "Emp Tabs");
+			}
+		}
+		else if(empPermissionsTab.isShowing())
+		{
+			if(!f.exists())
+			{
+				f = new File("C:/Users/Ayesha Ahmed/Documents/CS425/Final Project/sqlhw_final_project_ahmed_warman_caron/temp.txt");
+			}
+			if(e.getActionCommand() == "add permission")
+			{
+				try {
+					BufferedWriter out = new BufferedWriter(new FileWriter(f));
+					if(manager1RadioButton.isSelected())
+					{
+						out.write(new String("manager1"));
+					}
+					else if(manager2RadioButton.isSelected())
+					{
+						out.write(new String("manager2"));
+					}
+					out.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+			else if(e.getActionCommand() == "remove permissions")
+			{
+				f.delete();
 			}
 		}
 		frame.pack();
