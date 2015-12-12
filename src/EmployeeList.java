@@ -92,7 +92,7 @@ public class EmployeeList {
 			 // Connect to Oracle Database 
 			Connection conn = DriverManager.getConnection(URL, USER, PSWD);
 			Statement st = conn.createStatement();
-			st.executeUpdate("DELETE * FROM EWARMAN.EMPSCHEDULE WHERE EMP_ID ="+emp_id+" AND JOB_DATE = to_date('"+ddf+"', 'MM/dd/yyyy'), AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
+			st.executeUpdate("DELETE FROM AAHMED31.EMPSCHEDULE WHERE EMP_ID = '"+emp_id+"' AND JOB_DATE = to_date('"+ddf+"', 'MM/dd/yyyy') AND THEATER_ID = '"+th_id+"' AND JOB_TYPE = '"+job_t+"'");
 			conn.close(); 
 		} catch (Exception ex) { 
 			System.err.println(ex.getMessage()); 

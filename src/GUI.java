@@ -579,6 +579,8 @@ public class GUI extends JFrame implements ActionListener
 		
 		JPanel bp = new JPanel(new GridLayout(1,3));
 		removeShiftButton = new JButton("Remove Shift");
+		removeShiftButton.setActionCommand("remove shift");
+		removeShiftButton.addActionListener(this);
 		bp.add(new JPanel());
 		bp.add(removeShiftButton);
 		bp.add(new JPanel());
@@ -1854,9 +1856,12 @@ public class GUI extends JFrame implements ActionListener
 					//TODO: Logic to remove selected shift from DB
 					String selectedShift = (String) removeShiftList.getSelectedItem();
 					int emp = Integer.parseInt(selectedShift.substring(4, selectedShift.indexOf(", t")));
+					System.out.println(""+emp+".");
 					int th = Integer.parseInt(selectedShift.substring(3+selectedShift.indexOf("r: "), selectedShift.indexOf(", d")));
+					System.out.println(""+th+".");
 					String da = selectedShift.substring(3+selectedShift.indexOf("e: "), selectedShift.indexOf(", j"));
-					DateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+					System.out.println(da);
+					DateFormat format = new SimpleDateFormat("mm-dd-yyyy");
 					Date dat = new Date();
 					try {
 						dat = format.parse(da);
@@ -1865,7 +1870,9 @@ public class GUI extends JFrame implements ActionListener
 						JOptionPane.showMessageDialog(frame,"SQL Error with DATE. Closing App.","SQL Error",JOptionPane.ERROR_MESSAGE);
 						System.exit(1);
 					}
+					System.out.println(""+dat);
 					String jt = selectedShift.substring(3+selectedShift.indexOf("b: "), selectedShift.length());
+					System.out.println(jt+".");
 					EmployeeList.delSched(emp, dat, th, jt);
 				}
 			}
